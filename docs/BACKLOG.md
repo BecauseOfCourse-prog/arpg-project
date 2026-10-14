@@ -26,12 +26,12 @@ This is the canonical, prioritized inventory of proposed and planned work. Entri
 | ARPG-001 | Define the first playable vertical slice and its measurable scope. | P0 | Specified | — | [Accepted specification](specs/foundation/first-playable-vertical-slice.md) |
 | ARPG-002 | Establish project structure, scene conventions, and data-authoring approach. | P0 | Done | ARPG-001 | [Completed specification](specs/foundation/project-structure.md) |
 | ARPG-003 | Implement player movement and mouse interaction for the fixed oblique 2D projection. | P0 | Done | ARPG-001, ARPG-002 | [Completed specification](specs/foundation/player-movement-navigation.md) |
-| ARPG-004 | Implement a basic player attack and one enemy with health, damage, and defeat behavior. | P0 | In Progress | ARPG-001, ARPG-002, ARPG-003 | [Accepted specification](specs/foundation/basic-combat.md) |
+| ARPG-004 | Implement a basic player attack and one enemy with health, damage, and defeat behavior. | P0 | Done | ARPG-001, ARPG-002, ARPG-003 | [Completed specification](specs/foundation/basic-combat.md) |
 | ARPG-005 | Add a guaranteed equipment drop, pickup, and minimal inventory display. | P1 | Done | ARPG-001, ARPG-002, ARPG-004 | [Completed specification](specs/foundation/loot-and-inventory.md) |
 | ARPG-006 | Add an explorable area seamlessly connected to a safe hub area in the same traversable world. | P1 | Proposed | ARPG-001, ARPG-002, ARPG-003; area and safe-zone rules | — |
 | ARPG-007 | Add a hub vendor flow for selling loot and buying a potion or item. | P1 | Proposed | ARPG-005, ARPG-006; currency and vendor rules | — |
-| ARPG-008 | Add a keyboard-triggered ability and potion use. | P1 | ARPG-003, ARPG-004; input and resource rules | — |
-| ARPG-009 | Define save/load behavior and persistence boundaries. | P1 | Ready | ARPG-001; progression and persistence rules | — |
+| ARPG-008 | Add a keyboard-triggered ability and potion use. | P1 | Proposed | ARPG-003, ARPG-004; input and resource rules | — |
+| ARPG-009 | Define save/load behavior and persistence boundaries. | P1 | Specified | ARPG-001; progression and persistence rules | [Accepted specification](specs/foundation/save-load.md) |
 | ARPG-010 | Expand into multiple classes, enemy families, biome chains, affixes, and companion hiring. | P2 | Proposed | First playable slice; each subsystem requires its own specifications | — |
 
 ## Backlog maintenance

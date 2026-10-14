@@ -29,7 +29,7 @@ Create a single-player action RPG inspired by the broad genre conventions of Dia
 - Keep gameplay content data (for example classes, items, affixes, enemies, abilities, and areas) separate from gameplay logic. Prefer Godot Resources for authored game data unless a specification establishes a justified alternative.
 - Automated tests use GdUnit4 6.2.x. The Windows runner and test layout are documented in `docs/TESTING.md`.
 - First-slice movement uses left-button click-to-move and hold-to-follow-cursor, with free directional movement and automatic navigation around walls and large environment obstacles.
-- The game must support saving and loading. The save format and persistence behavior will be specified separately.
+- The game must support saving and loading. The accepted full-game behavior is specified in `docs/specs/foundation/save-load.md`: three manual slots, one autosave slot, persistent character progression/items/quests, and no persistence of location, position, or world changes. The save format is deferred to implementation planning.
 - The asset pipeline and release pipeline will be specified as needed.
 
 ## Core gameplay pillars

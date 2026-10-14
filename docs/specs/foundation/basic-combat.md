@@ -1,6 +1,6 @@
 # ARPG-004: Basic Combat
 
-- **Status:** In Progress
+- **Status:** Complete
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md); [ARPG-003: Player Movement and Navigation](player-movement-navigation.md)
@@ -76,12 +76,12 @@ The first playable loop requires the player to use a basic attack to defeat one 
 - [x] The attack fires once per second, deals one damage, and defeats the enemy after five successful hits.
 - [x] A visible projectile is blocked by walls and large environment objects but not by small objects.
 - [x] Hits have visual feedback without a health bar. (Confirmed by the project owner in Godot Editor.)
-- [ ] Defeat has visual feedback without a health bar. (Code is implemented; interactive confirmation is pending.)
+- [x] Defeat has visual feedback without a health bar. (Confirmed by the project owner in Godot Editor.)
 - [x] The enemy can be defeated, triggering the equipment drop defined by ARPG-001.
 
 ## Verification plan and results
 
-Automated verification: all 13 GdUnit4 test cases pass. Coverage includes target selection and approach, repeated attacks and movement cancellation, passive enemy behavior, projectile damage, wall blocking, the default one-second attack cadence, five-hit defeat and one equipment drop, pickup and inventory behavior, authored combat tuning, and existing navigation/project structure behavior. Headless project import and main-scene startup pass. The project owner confirmed hit feedback and item, pickup, and inventory presentation in Godot Editor; defeat feedback still needs visual confirmation.
+Automated verification: all 13 GdUnit4 test cases pass. Coverage includes target selection and approach, repeated attacks and movement cancellation, passive enemy behavior, projectile damage, wall blocking, the default one-second attack cadence, five-hit defeat and one equipment drop, pickup and inventory behavior, authored combat tuning, and existing navigation/project structure behavior. Headless project import and main-scene startup pass. The project owner confirmed hit and defeat feedback in Godot Editor.
 
 ## Documentation impact
 
@@ -110,3 +110,4 @@ Do not infer a projectile node structure or full-game enemy behavior from this b
 | 2026-10-14 | Added the passive exploration enemy, repeatable ranged projectile combat, approach targeting, hit/defeat behavior, and the guaranteed authored equipment drop. Added automated combat tests; interactive visual confirmation remains. |
 | 2026-10-14 | Fixed the guaranteed drop location after a playtest found it outside the ground boundary; loot pickup and inventory are being implemented under ARPG-005. |
 | 2026-10-14 | The project owner confirmed hit feedback in Godot Editor. |
+| 2026-10-14 | The project owner confirmed defeat feedback in Godot Editor; ARPG-004 is complete. |
