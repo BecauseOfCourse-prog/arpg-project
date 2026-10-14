@@ -6,3 +6,4 @@
 script = ExtResource("1")
 definition_id = "adventurer"
 display_name = "Adventurer"
+starting_gold = 100

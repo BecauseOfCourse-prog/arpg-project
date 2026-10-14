@@ -48,6 +48,7 @@ The first playable loop requires the player to use a basic attack to defeat one 
 - A movement command takes precedence over a repeating attack command and ends that repeated attack command.
 - The first-slice enemy is passive and stationary. This does not establish behavior for enemies in the full game.
 - The basic attack fires once per second and deals one point of damage. The enemy has five health and is defeated after five successful hits.
+- Attack cadence is determined by character and weapon combat stats and is independent of how often the player clicks the selected enemy.
 - Attack range is tuned against the authored scene scale during the first playtest; the player automatically approaches until inside that range without overlapping the enemy.
 - The ranged attack is represented by a visible temporary projectile. Walls and large environment objects block the projectile; small objects do not.
 - Hit and defeat feedback are visual only; the enemy does not need a health bar.
@@ -74,6 +75,7 @@ The first playable loop requires the player to use a basic attack to defeat one 
 - [x] An attack command repeats attacks until a movement command is issued.
 - [x] The first-slice enemy remains stationary and does not attack the player.
 - [x] The attack fires once per second, deals one damage, and defeats the enemy after five successful hits.
+- [x] Repeated clicks on the selected enemy do not reset or accelerate the attack cadence.
 - [x] A visible projectile is blocked by walls and large environment objects but not by small objects.
 - [x] Hits have visual feedback without a health bar. (Confirmed by the project owner in Godot Editor.)
 - [x] Defeat has visual feedback without a health bar. (Confirmed by the project owner in Godot Editor.)
@@ -81,7 +83,7 @@ The first playable loop requires the player to use a basic attack to defeat one 
 
 ## Verification plan and results
 
-Automated verification: all 13 GdUnit4 test cases pass. Coverage includes target selection and approach, repeated attacks and movement cancellation, passive enemy behavior, projectile damage, wall blocking, the default one-second attack cadence, five-hit defeat and one equipment drop, pickup and inventory behavior, authored combat tuning, and existing navigation/project structure behavior. Headless project import and main-scene startup pass. The project owner confirmed hit and defeat feedback in Godot Editor.
+Automated verification: the cadence regression test repeatedly issues target clicks while checking that the configured attack interval remains authoritative. The full current test run is recorded in ARPG-007 verification. Coverage includes target selection and approach, repeated attacks and movement cancellation, passive enemy behavior, projectile damage, wall blocking, the default one-second attack cadence, five-hit defeat and one equipment drop, pickup and inventory behavior, authored combat tuning, and existing navigation/project structure behavior. Headless project import and main-scene startup pass. The project owner confirmed hit and defeat feedback in Godot Editor.
 
 ## Documentation impact
 
@@ -111,3 +113,4 @@ Do not infer a projectile node structure or full-game enemy behavior from this b
 | 2026-10-14 | Fixed the guaranteed drop location after a playtest found it outside the ground boundary; loot pickup and inventory are being implemented under ARPG-005. |
 | 2026-10-14 | The project owner confirmed hit feedback in Godot Editor. |
 | 2026-10-14 | The project owner confirmed defeat feedback in Godot Editor; ARPG-004 is complete. |
+| 2026-10-14 | Fixed attack cadence so repeated target clicks no longer reset the character/weapon attack timer; added a regression test. |

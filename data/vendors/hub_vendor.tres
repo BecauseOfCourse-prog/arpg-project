@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="VendorDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/hub/vendor_definition.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/hub/vendor_offer.gd" id="2"]
+[ext_resource type="Resource" path="res://data/items/health_potion.tres" id="3"]
+
+[sub_resource type="Resource" id="PotionOffer"]
+script = ExtResource("2")
+item = ExtResource("3")
+purchase_price = 25
+stock_quantity = 5
+
+[resource]
+script = ExtResource("1")
+vendor_name = "Hub Vendor"
+stock_mode = 0
+offers = Array[ExtResource("2")]([SubResource("PotionOffer")])

@@ -1,22 +1,87 @@
 extends CanvasLayer
 class_name InventoryController
 
-var collected_items: Array[ItemDefinition] = []
+signal item_clicked(inventory_index: int)
 
-@onready var _items_label: Label = get_node_or_null("Panel/Items") as Label
+var collected_items: Array[ItemDefinition] = []
+const GRID_WIDTH := 10
+const GRID_HEIGHT := 4
+var item_positions: Array[Vector2i] = []
+
+@onready var _grid_view: Control = get_node_or_null("Panel/Contents/Grid") as Control
+@onready var _items_label: Label = get_node_or_null("Panel/Contents/Items") as Label
 
 func _ready() -> void:
 	add_to_group("inventory_controller")
+	if _grid_view != null:
+		_grid_view.inventory = self
+		if _grid_view.has_signal("item_clicked"):
+			_grid_view.connect("item_clicked", _on_grid_item_clicked)
 	_refresh_display()
 
 func collect_item(item: WorldItem) -> void:
 	if item == null or item.definition == null or item.is_queued_for_deletion():
 		return
-	collected_items.append(item.definition)
+	if not add_item(item.definition):
+		return
 	item.queue_free()
+
+func can_add_item(definition: ItemDefinition) -> bool:
+	return _find_free_position(definition) != Vector2i(-1, -1)
+
+func add_item(definition: ItemDefinition) -> bool:
+	if definition == null:
+		return false
+	var position := _find_free_position(definition)
+	if position == Vector2i(-1, -1):
+		return false
+	collected_items.append(definition)
+	item_positions.append(position)
 	_refresh_display()
+	return true
+
+func remove_item_at(index: int) -> ItemDefinition:
+	if index < 0 or index >= collected_items.size():
+		return null
+	var definition := collected_items[index]
+	collected_items.remove_at(index)
+	item_positions.remove_at(index)
+	_refresh_display()
+	return definition
+
+func _find_free_position(definition: ItemDefinition) -> Vector2i:
+	if definition == null:
+		return Vector2i(-1, -1)
+	var width := clampi(definition.inventory_width, 1, GRID_WIDTH)
+	var height := clampi(definition.inventory_height, 1, GRID_HEIGHT)
+	var occupied: Array[Array] = []
+	for y in range(GRID_HEIGHT):
+		var row: Array[bool] = []
+		row.resize(GRID_WIDTH)
+		row.fill(false)
+		occupied.append(row)
+	for index in range(mini(collected_items.size(), item_positions.size())):
+		var item := collected_items[index]
+		var origin := item_positions[index]
+		var item_width := clampi(item.inventory_width, 1, GRID_WIDTH)
+		var item_height := clampi(item.inventory_height, 1, GRID_HEIGHT)
+		for y in range(origin.y, mini(GRID_HEIGHT, origin.y + item_height)):
+			for x in range(origin.x, mini(GRID_WIDTH, origin.x + item_width)):
+				occupied[y][x] = true
+	for y in range(GRID_HEIGHT - height + 1):
+		for x in range(GRID_WIDTH - width + 1):
+			var fits := true
+			for item_y in range(y, y + height):
+				for item_x in range(x, x + width):
+					if occupied[item_y][item_x]:
+						fits = false
+			if fits:
+				return Vector2i(x, y)
+	return Vector2i(-1, -1)
 
 func _refresh_display() -> void:
+	if _grid_view != null:
+		_grid_view.call("refresh")
 	if _items_label == null:
 		return
 	if collected_items.is_empty():
@@ -24,5 +89,8 @@ func _refresh_display() -> void:
 		return
 	var lines := PackedStringArray(["Inventory"])
 	for item in collected_items:
-		lines.append("%s — %s, %s" % [item.display_name, item.rarity, item.affix_text])
+		lines.append("%s (%dx%d) — %s, %s" % [item.display_name, item.inventory_width, item.inventory_height, item.rarity, item.affix_text])
 	_items_label.text = "\n".join(lines)
+
+func _on_grid_item_clicked(inventory_index: int) -> void:
+	item_clicked.emit(inventory_index)

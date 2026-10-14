@@ -1,6 +1,6 @@
 # ARPG-007: Hub Vendor
 
-- **Status:** Accepted
+- **Status:** In Progress
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md); [ARPG-003: Player Movement and Navigation](player-movement-navigation.md); [ARPG-005: Equipment Drop and Minimal Inventory](loot-and-inventory.md)
@@ -28,10 +28,11 @@ Trading gives collected loot a use beyond inventory accumulation and lets the pl
 - Multiplayer trading, player-to-player markets, crafting, or auction systems.
 - Specialized vendor roles and reputation or faction-based pricing.
 - Any behavior not needed for the initial vendor transaction flow.
+- Implementing a game clock, day/night cycle, or timed world activities; these belong to ARPG-012.
 
 ## User-facing behavior
 
-Clicking a vendor in the safe hub opens a window with buy and sell sections. The player can transact immediately, without a per-transaction confirmation. Fixed-stock vendors offer unlimited quantities; changing-stock vendors refresh their limited assortment each in-game day. Players can sell equipment and consumables such as identification scrolls, teleport scrolls, and upgrade orbs for 50% of an item's purchase price. A failed transaction is rejected with a visible reason and no state changes.
+Clicking a vendor in the safe hub opens a vendor inventory window with two tabs: `Buy` displays the vendor's 10-by-10 stock grid, and `Buyback` displays items the player sold to that vendor. Clicking a vendor item buys it immediately. While the window is open, clicking an item in the player's own 10-by-4 inventory sells it immediately for 50% of its purchase price. A sold item can be bought back for exactly the amount the vendor paid for it. Buyback entries remain available while the current world session is active, including after closing and reopening the vendor window. No per-transaction confirmation is used. Fixed-stock vendors offer unlimited quantities; changing-stock vendors are planned to refresh each in-game day once a game-time system exists. A failed transaction is rejected with a visible reason and no state changes.
 
 ## Rules and data
 
@@ -40,6 +41,9 @@ Clicking a vendor in the safe hub opens a window with buy and sell sections. The
 - Player gold can come from selling items, quest rewards, enemy drops, and small breakable objects on the map. The breakable-object behavior itself is outside this vendor specification and requires its own feature scope before implementation.
 - Support fixed-stock vendors with unlimited quantities and vendors whose limited assortment refreshes once per in-game day.
 - Sellable categories include equipment and consumables such as identification scrolls, teleport scrolls, and upgrade orbs. Each item or vendor offer has an authored purchase price; selling it returns 50% of that price.
+- Only unequipped items present in the player's inventory can be sold; equipped items must be unequipped first.
+- Selling an item adds it to that vendor's buyback list with a repurchase price equal to the sale proceeds. A successful buyback removes that entry; a failed buyback leaves gold, inventory, and buyback entries unchanged.
+- The inventory is a 10-by-4 rectangular grid. Each item occupies its authored width and height in adjacent slots; purchases and pickups are rejected if no fitting space exists.
 - Reject failed transactions, visibly explain the reason, and leave player and vendor state unchanged.
 - Vendor access is limited to the safe hub unless a later specification changes that rule.
 
@@ -59,18 +63,21 @@ Clicking a vendor in the safe hub opens a window with buy and sell sections. The
 
 ## Acceptance criteria
 
-- [ ] The player can interact with the vendor in the safe hub and open and close the agreed transaction interface.
-- [ ] The player can sell equipment and consumables (identification scrolls, teleport scrolls, and upgrade orbs) for 50% of their purchase price.
-- [ ] The player can buy an offered potion or item when the agreed purchase conditions are met.
-- [ ] New characters receive the starting gold amount authored for their class.
-- [ ] Fixed-stock vendors offer unlimited quantities, while changing-stock vendors refresh their limited assortment once per in-game day.
-- [ ] Transactions update currency and inventory exactly once and preserve system ownership.
-- [ ] Insufficient funds, unavailable stock, or insufficient inventory capacity leave player and vendor state unchanged and provide visible feedback.
-- [ ] Automated tests cover successful purchase and sale, transaction failure, and state consistency.
+- [x] The player can interact with the vendor in the safe hub and open and close the vendor inventory interface.
+- [x] The player can sell unequipped equipment and consumables from inventory for 50% of their purchase price (automated service test; equipment slots are not yet implemented).
+- [x] The player can buy an offered potion or item when the agreed purchase conditions are met (automated service test).
+- [x] The inventory enforces a 10-by-4 grid and item dimensions for pickup and purchase (automated capacity rejection test).
+- [x] New characters receive the starting gold amount authored for their class (scene wiring test; current Adventurer definition starts with 100).
+- [x] The current prototype vendor offers unlimited fixed stock (automated test). Limited daily stock is designed but deferred until ARPG-012 provides a game-day event.
+- [x] The vendor window presents a 10-by-10 item grid; clicking a vendor item buys it, and clicking a player inventory item while the vendor window is open sells it.
+- [x] The vendor window has separate `Buy` and `Buyback` tabs; items sold to that vendor can be repurchased at the same price the player received.
+- [x] Transactions update currency and inventory exactly once and preserve system ownership (automated transaction tests).
+- [ ] Insufficient funds, unavailable stock, or insufficient inventory capacity leave player and vendor state unchanged and provide visible feedback. State and rejection signals are tested; visual feedback awaits editor verification.
+- [x] Automated tests cover successful purchase and sale, transaction failure, and state consistency.
 
 ## Verification plan and results
 
-Use automated tests for deterministic transaction rules and manually verify the vendor interaction and feedback in Godot Editor. No implementation or verification has been performed.
+GdUnit4 test suite: 24 cases passed, 0 failures. Tests cover purchasing, selling, exact-price buyback, failed buyback with full inventory, rejection when the 10-by-10 buyback grid is full, tab flow, and attack cadence independent of clicks. A headless main-scene launch completed without errors. Manually verify both vendor tabs, buyback after closing/reopening the window, and rejection feedback in Godot Editor before marking this specification complete. Buyback entries last for the current world session. The active vendor uses fixed unlimited stock; daily restock remains a future integration with ARPG-012.
 
 ## Documentation impact
 
@@ -94,3 +101,7 @@ Keep concrete item catalogs, purchase prices, and class-specific starting gold i
 | 2026-10-14 | Initial draft based on the next selected full-game hub vendor feature; transaction and economy rules remain open. |
 | 2026-10-14 | Project owner selected numeric player gold; income from sales, quests, enemy drops, and breakable map objects; fixed unlimited or changing vendor stock; sale of equipment and consumables; immediate transactions through buy/sell sections; and rejection of failed transactions without state changes. |
 | 2026-10-14 | Project owner assigned gold balance ownership to Player Character & Progression, set starting gold to depend on class, chose 50% sale value, and chose limited changing stock that refreshes each in-game day. The vendor behavior specification was accepted. |
+| 2026-10-14 | Project owner specified that equipment must be unequipped before it can be sold. |
+| 2026-10-14 | Project owner specified a 10-by-4 inventory grid with item-specific rectangular dimensions. |
+| 2026-10-14 | Project owner changed trading interaction: click player inventory items to sell while trading is open; show vendor stock in a 10-by-10 grid and buy by clicking vendor items. |
+| 2026-10-14 | Project owner requested `Buy` and `Buyback` tabs; sold items remain available at the exact price paid to the player. |

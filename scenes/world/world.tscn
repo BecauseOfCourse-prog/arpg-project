@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world_area.gd" id="1"]
 [ext_resource type="Resource" path="res://data/areas/hub.tres" id="2"]
@@ -8,14 +8,23 @@
 [ext_resource type="PackedScene" path="res://scenes/actors/enemy.tscn" id="6"]
 [ext_resource type="Script" path="res://scripts/combat/combat_controller.gd" id="7"]
 [ext_resource type="Script" path="res://scripts/items/inventory_controller.gd" id="8"]
+[ext_resource type="Script" path="res://scripts/progression/player_progression.gd" id="9"]
+[ext_resource type="Script" path="res://scripts/hub/vendor_service.gd" id="10"]
+[ext_resource type="Script" path="res://scripts/hub/vendor_interactable.gd" id="11"]
+[ext_resource type="Script" path="res://scripts/hub/vendor_window.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/world/world_session.gd" id="13"]
+[ext_resource type="Script" path="res://scripts/items/inventory_grid_view.gd" id="14"]
 [sub_resource type="RectangleShape2D" id="RectangleShape_wall"]
 size = Vector2(24, 112)
 [sub_resource type="RectangleShape2D" id="RectangleShape_north_boundary"]
 size = Vector2(24, 196)
 [sub_resource type="RectangleShape2D" id="RectangleShape_south_boundary"]
 size = Vector2(24, 196)
+[sub_resource type="CircleShape2D" id="VendorClickShape"]
+radius = 24.0
 
 [node name="World" type="Node2D"]
+script = ExtResource("13")
 
 [node name="NavigationGrid" type="Node2D" parent="."]
 script = ExtResource("5")
@@ -40,6 +49,17 @@ horizontal_alignment = 1
 [node name="Player" parent="Hub" instance=ExtResource("4")]
 position = Vector2(-155, 20)
 
+[node name="Vendor" type="Area2D" parent="Hub" groups=["hub_vendors"]]
+position = Vector2(-280, 30)
+script = ExtResource("11")
+
+[node name="Visual" type="Polygon2D" parent="Hub/Vendor"]
+polygon = PackedVector2Array(-14, -25, 14, -25, 17, 13, 0, 20, -17, 13)
+color = Color(0.82, 0.58, 0.22, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hub/Vendor"]
+shape = SubResource("VendorClickShape")
+
 [node name="Exploration" type="Node2D" parent="."]
 script = ExtResource("1")
 definition = ExtResource("3")
@@ -53,14 +73,30 @@ script = ExtResource("7")
 [node name="Inventory" type="CanvasLayer" parent="."]
 script = ExtResource("8")
 
+[node name="PlayerProgression" type="Node" parent="."]
+script = ExtResource("9")
+
+[node name="VendorService" type="Node" parent="."]
+script = ExtResource("10")
+
+[node name="VendorWindow" type="CanvasLayer" parent="."]
+script = ExtResource("12")
+
 [node name="Panel" type="PanelContainer" parent="Inventory"]
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 320.0
-offset_bottom = 92.0
+offset_right = 362.0
+offset_bottom = 236.0
 mouse_filter = 2
 
-[node name="Items" type="Label" parent="Inventory/Panel"]
+[node name="Contents" type="VBoxContainer" parent="Inventory/Panel"]
+layout_mode = 2
+
+[node name="Grid" type="Control" parent="Inventory/Panel/Contents"]
+custom_minimum_size = Vector2(338, 134)
+script = ExtResource("14")
+
+[node name="Items" type="Label" parent="Inventory/Panel/Contents"]
 layout_mode = 2
 text = "Inventory: empty"
 

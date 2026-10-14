@@ -7,3 +7,4 @@ class_name PlayerDefinition
 @export var basic_attack_interval: float = 1.0
 @export var basic_attack_range: float = 104.0
 @export var projectile_speed: float = 420.0
+@export_range(0, 1000000, 1) var starting_gold: int = 0

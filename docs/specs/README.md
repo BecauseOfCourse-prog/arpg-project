@@ -20,7 +20,7 @@ Change specifications are durable records of requested behavior changes and thei
 | [ARPG-003: Player Movement and Navigation](foundation/player-movement-navigation.md) | Complete | Implements mouse-led movement, obstacle navigation, actor collision, and the sole passage between connected zones for the first slice. |
 | [ARPG-004: Basic Combat](foundation/basic-combat.md) | Complete | Implements a ranged attack against one stationary, passive enemy for the first slice. |
 | [ARPG-005: Equipment Drop and Minimal Inventory](foundation/loot-and-inventory.md) | Complete | Implements one guaranteed equipment drop, contact pickup, and minimal inventory display. |
-| [ARPG-007: Hub Vendor](foundation/hub-vendor.md) | Accepted | Defines safe-hub trading, player gold, item sales, and fixed or daily-refreshing vendor stock. |
+| [ARPG-007: Hub Vendor](foundation/hub-vendor.md) | In Progress | Implements safe-hub trading, player gold, item sales, grid inventory capacity, and fixed or daily-refreshing vendor stock. |
 | [ARPG-009: Save and Load](foundation/save-load.md) | Accepted | Defines manual and automatic saves, persistence boundaries, slot behavior, and recovery across application sessions. |
 
 ## Naming and placement

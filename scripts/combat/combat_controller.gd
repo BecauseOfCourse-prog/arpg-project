@@ -19,10 +19,11 @@ func _ready() -> void:
 		player.movement_command_issued.connect(_on_movement_command_issued)
 
 func _physics_process(delta: float) -> void:
+	# Attack cadence is a character/weapon stat, not a pointer-input repeat rate.
+	_attack_cooldown = maxf(0.0, _attack_cooldown - delta)
 	if not is_instance_valid(target) or target.is_defeated or player == null:
 		target = null
 		return
-	_attack_cooldown = maxf(0.0, _attack_cooldown - delta)
 	var offset := target.global_position - player.global_position
 	if offset.length() > player.definition.basic_attack_range:
 		if not player.is_moving():
@@ -40,7 +41,6 @@ func _on_attack_requested(enemy: EnemyActor) -> void:
 	if not enemy.defeated.is_connected(_on_enemy_defeated):
 		enemy.defeated.connect(_on_enemy_defeated, CONNECT_ONE_SHOT)
 	target = enemy
-	_attack_cooldown = 0.0
 
 func _on_movement_command_issued() -> void:
 	target = null

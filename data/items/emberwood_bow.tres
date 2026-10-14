@@ -8,3 +8,7 @@ definition_id = "emberwood_bow"
 display_name = "Emberwood Bow"
 rarity = "Magic"
 affix_text = "of Cinders (+1 Fire Damage)"
+category = 0
+purchase_price = 100
+inventory_width = 2
+inventory_height = 3

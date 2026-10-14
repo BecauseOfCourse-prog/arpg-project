@@ -73,6 +73,28 @@ func test_default_attack_cadence_is_one_hit_per_second() -> void:
 	assert_int(enemy.current_health).is_equal(3)
 	main.queue_free()
 
+func test_repeated_clicks_cannot_increase_attack_speed() -> void:
+	var main := _create_main()
+	if main == null:
+		return
+	var player := main.get_node("World/Hub/Player") as PlayerActor
+	var enemy := main.get_node("World/Exploration/TrainingSentinel") as EnemyActor
+	if player == null or enemy == null:
+		main.queue_free()
+		return
+	player.definition = player.definition.duplicate() as PlayerDefinition
+	player.definition.basic_attack_interval = 0.5
+	player.global_position = enemy.global_position - Vector2(80, 0)
+	await get_tree().physics_frame
+	for _frame in range(35):
+		player._issue_pointer_command(enemy.global_position)
+		await get_tree().physics_frame
+	assert_int(enemy.current_health).is_equal(4)
+	for _frame in range(20):
+		await get_tree().physics_frame
+	assert_int(enemy.current_health).is_equal(3)
+	main.queue_free()
+
 func test_movement_command_cancels_repeated_attack() -> void:
 	var main := _create_main()
 	if main == null:
@@ -157,9 +179,9 @@ func test_touching_world_item_collects_it_and_updates_inventory_display() -> voi
 			break
 	await get_tree().process_frame
 	assert_int((inventory.get("collected_items") as Array).size()).is_equal(1)
-	assert_bool(inventory.get_node("Panel/Items").text.contains("Emberwood Bow")).is_true()
-	assert_bool(inventory.get_node("Panel/Items").text.contains("Magic")).is_true()
-	assert_bool(inventory.get_node("Panel/Items").text.contains("of Cinders")).is_true()
+	assert_bool(inventory.get_node("Panel/Contents/Items").text.contains("Emberwood Bow")).is_true()
+	assert_bool(inventory.get_node("Panel/Contents/Items").text.contains("Magic")).is_true()
+	assert_bool(inventory.get_node("Panel/Contents/Items").text.contains("of Cinders")).is_true()
 	assert_bool(is_instance_valid(item)).is_false()
 	player.command_move_to(Vector2(80, 0))
 	for _frame in range(140):
