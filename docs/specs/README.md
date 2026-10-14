@@ -17,7 +17,7 @@ Change specifications are durable records of requested behavior changes and thei
 | --- | --- | --- |
 | [ARPG-001: First Playable Vertical Slice](foundation/first-playable-vertical-slice.md) | Accepted | Defines the first end-to-end player loop; ready for implementation planning. |
 | [ARPG-002: Godot Project Structure and Scene Conventions](foundation/project-structure.md) | Complete | Defines the repository-root project, continuous world scene, reusable actor/item scenes, and Godot Resources. |
-| [ARPG-003: Player Movement and Navigation](foundation/player-movement-navigation.md) | In Progress | Defines mouse-led movement, obstacle navigation, actor collision, and the sole passage between connected zones for the first slice. |
+| [ARPG-003: Player Movement and Navigation](foundation/player-movement-navigation.md) | Complete | Implements mouse-led movement, obstacle navigation, actor collision, and the sole passage between connected zones for the first slice. |
 | [ARPG-004: Basic Combat](foundation/basic-combat.md) | Accepted | Defines a ranged attack against one stationary, passive enemy for the first slice. |
 | [ARPG-005: Equipment Drop and Minimal Inventory](foundation/loot-and-inventory.md) | Accepted | Defines one guaranteed equipment drop, contact pickup, and minimal inventory display. |
 

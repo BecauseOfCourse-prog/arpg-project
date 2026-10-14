@@ -1,6 +1,6 @@
 # ARPG-003: Player Movement and Navigation
 
-- **Status:** In Progress
+- **Status:** Complete
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md)
@@ -82,11 +82,11 @@ Mouse-led movement and traversable connections between the hub and exploration a
 - [x] The player navigates around a blocking object when a route exists and remains stationary when no route exists to the commanded goal.
 - [x] The hub and exploration area can be traversed as one continuous world, with a suitable landmark communicating their transition.
 - [x] Zone-to-zone paths cross the shared border only through the marked passage; the remaining border is physically blocked.
-- [ ] Verify click-to-move, hold-to-follow, and obstacle avoidance interactively in Godot Editor.
+- [x] Verify click-to-move, hold-to-follow, obstacle avoidance, visibility across the zone boundary, and passage-only zone crossing interactively in Godot Editor.
 
 ## Verification plan and results
 
-Automated verification: six GdUnit4 cases pass, including routing around the test wall, destination replacement, active player movement, enemy attack request, off-ground boundary resolution, ground/player draw order, and zone-boundary passage behavior. Boundary resolution uses a single breadth-first traversal of reachable navigation cells. Headless project import and main-scene launch pass. The latest zone-boundary change still needs an interactive Godot Editor check.
+Automated verification: six GdUnit4 cases pass, including routing around the test wall, destination replacement, active player movement, enemy attack request, off-ground boundary resolution, ground/player draw order, and zone-boundary passage behavior. Boundary resolution uses a single breadth-first traversal of reachable navigation cells. Headless project import and main-scene launch pass. The project owner confirmed the movement, obstacle behavior, visibility, and passage-only zone crossing in Godot Editor.
 
 ## Documentation impact
 
@@ -115,3 +115,4 @@ The player is a floating `CharacterBody2D` that follows a smoothed path generate
 | 2026-10-14 | Implemented continuous click and hold movement, AStarGrid2D route planning with smoothed free movement, obstacle boundary resolution, and an attack request signal. Added a blocking test wall and automated navigation tests. |
 | 2026-10-14 | Drew both ground polygons behind the player so the exploration floor cannot cover the character; added a regression assertion. Replaced repeated path queries across every grid cell with one reachable-cell traversal for boundary resolution. |
 | 2026-10-14 | Added collision barriers along the shared zone boundary, leaving only the central marked passage open; added automated path and collision coverage. |
+| 2026-10-14 | The project owner confirmed the interactive movement and transition checks; ARPG-003 is complete. |
