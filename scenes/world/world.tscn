@@ -1,10 +1,13 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world_area.gd" id="1"]
 [ext_resource type="Resource" path="res://data/areas/hub.tres" id="2"]
 [ext_resource type="Resource" path="res://data/areas/exploration.tres" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="4"]
 [ext_resource type="Script" path="res://scripts/world/navigation_grid.gd" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/actors/enemy.tscn" id="6"]
+[ext_resource type="Script" path="res://scripts/combat/combat_controller.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/items/inventory_controller.gd" id="8"]
 [sub_resource type="RectangleShape2D" id="RectangleShape_wall"]
 size = Vector2(24, 112)
 [sub_resource type="RectangleShape2D" id="RectangleShape_north_boundary"]
@@ -40,6 +43,26 @@ position = Vector2(-155, 20)
 [node name="Exploration" type="Node2D" parent="."]
 script = ExtResource("1")
 definition = ExtResource("3")
+
+[node name="TrainingSentinel" parent="Exploration" instance=ExtResource("6")]
+position = Vector2(300, 50)
+
+[node name="CombatController" type="Node" parent="."]
+script = ExtResource("7")
+
+[node name="Inventory" type="CanvasLayer" parent="."]
+script = ExtResource("8")
+
+[node name="Panel" type="PanelContainer" parent="Inventory"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 320.0
+offset_bottom = 92.0
+mouse_filter = 2
+
+[node name="Items" type="Label" parent="Inventory/Panel"]
+layout_mode = 2
+text = "Inventory: empty"
 
 [node name="Ground" type="Polygon2D" parent="Exploration" groups=["walkable_ground"]]
 z_index = -1

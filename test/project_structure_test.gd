@@ -42,10 +42,12 @@ func test_reusable_player_enemy_and_item_scenes_load() -> void:
 	var player_scene: PackedScene = load("res://scenes/actors/player.tscn") as PackedScene
 	var enemy_scene: PackedScene = load("res://scenes/actors/enemy.tscn") as PackedScene
 	var item_scene: PackedScene = load("res://scenes/items/world_item.tscn") as PackedScene
+	var projectile_scene: PackedScene = load("res://scenes/combat/basic_projectile.tscn") as PackedScene
 
 	assert_object(player_scene).is_not_null()
 	assert_object(enemy_scene).is_not_null()
 	assert_object(item_scene).is_not_null()
+	assert_object(projectile_scene).is_not_null()
 
 func test_authored_gameplay_definitions_use_resources() -> void:
 	var player: PlayerDefinition = load("res://data/characters/adventurer.tres") as PlayerDefinition
@@ -64,6 +66,9 @@ func test_authored_gameplay_definitions_use_resources() -> void:
 
 	assert_str(player.display_name).is_equal("Adventurer")
 	assert_str(enemy.display_name).is_equal("Training Sentinel")
+	assert_int(enemy.max_health).is_equal(5)
+	assert_int(player.basic_attack_damage).is_equal(1)
+	assert_float(player.basic_attack_interval).is_equal(1.0)
 	assert_str(item.display_name).is_equal("Emberwood Bow")
 	assert_str(item.rarity).is_equal("Magic")
 	assert_bool(hub.is_safe).is_true()

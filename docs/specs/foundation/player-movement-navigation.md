@@ -116,3 +116,4 @@ The player is a floating `CharacterBody2D` that follows a smoothed path generate
 | 2026-10-14 | Drew both ground polygons behind the player so the exploration floor cannot cover the character; added a regression assertion. Replaced repeated path queries across every grid cell with one reachable-cell traversal for boundary resolution. |
 | 2026-10-14 | Added collision barriers along the shared zone boundary, leaving only the central marked passage open; added automated path and collision coverage. |
 | 2026-10-14 | The project owner confirmed the interactive movement and transition checks; ARPG-003 is complete. |
+| 2026-10-14 | The project owner reconfirmed that the shared zone boundary works as intended: only the designated passage is traversable. |

@@ -6,3 +6,4 @@
 script = ExtResource("1")
 definition_id = "first_enemy"
 display_name = "Training Sentinel"
+max_health = 5

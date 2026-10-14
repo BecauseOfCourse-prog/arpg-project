@@ -1,12 +1,19 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/items/world_item.gd" id="1"]
 [ext_resource type="Resource" path="res://data/items/emberwood_bow.tres" id="2"]
+[sub_resource type="CircleShape2D" id="CircleShape_item"]
+radius = 14.0
 
-[node name="WorldItem" type="Node2D"]
+[node name="WorldItem" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
 script = ExtResource("1")
 definition = ExtResource("2")
 
 [node name="PlaceholderSprite" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(0, -10, 10, 0, 0, 10, -10, 0)
 color = Color(0.95, 0.72, 0.25, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape_item")

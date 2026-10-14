@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name PlayerActor
 
 signal attack_requested(target: EnemyActor)
+signal movement_command_issued
 
 @export var definition: PlayerDefinition
 @export var move_speed: float = 180.0
@@ -59,6 +60,14 @@ func _physics_process(_delta: float) -> void:
 func command_move_to(destination: Vector2) -> void:
 	_request_move_to(destination, true)
 
+func stop_movement() -> void:
+	_path.clear()
+	_path_index = 0
+	velocity = Vector2.ZERO
+
+func is_moving() -> bool:
+	return _path_index < _path.size()
+
 func _update_held_goal(goal: Vector2) -> void:
 	if _last_hold_goal.distance_squared_to(goal) < 25.0:
 		return
@@ -68,11 +77,10 @@ func _update_held_goal(goal: Vector2) -> void:
 func _issue_pointer_command(point: Vector2) -> void:
 	var enemy := _enemy_at(point)
 	if enemy != null:
-		_path.clear()
-		_path_index = 0
-		velocity = Vector2.ZERO
+		stop_movement()
 		attack_requested.emit(enemy)
 		return
+	movement_command_issued.emit()
 	var off_ground := _navigation == null or not _navigation.is_point_on_ground(point)
 	var blocked := _navigation != null and _navigation.is_point_blocked(point, self)
 	_request_move_to(point, off_ground or blocked)

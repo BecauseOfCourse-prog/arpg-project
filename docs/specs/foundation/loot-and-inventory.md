@@ -1,6 +1,6 @@
 # ARPG-005: Equipment Drop and Minimal Inventory
 
-- **Status:** Accepted
+- **Status:** Complete
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md); [ARPG-004: Basic Combat](basic-combat.md)
@@ -66,17 +66,17 @@ The vertical slice must demonstrate a compact loot loop from enemy defeat throug
 
 ## Acceptance criteria
 
-- [ ] Defeating the first-slice enemy creates exactly one `Emberwood Bow` drop near the enemy.
-- [ ] The drop has the predefined `Magic` rarity and `of Cinders` affix text.
-- [ ] Left-clicking the item commands movement toward it, and contact collects it automatically.
-- [ ] The minimal inventory list displays the item name, rarity, and affix.
-- [ ] The collected item remains in inventory after return to the hub in the same run.
-- [ ] The affix does not modify player stats in this slice.
-- [ ] Automated tests verify guaranteed drop, pickup, inventory display data, and retention across area traversal.
+- [x] Defeating the first-slice enemy creates exactly one `Emberwood Bow` drop on walkable ground near the enemy.
+- [x] The drop has the predefined `Magic` rarity and `of Cinders` affix text.
+- [x] Left-clicking the item commands movement toward it, and contact collects it automatically.
+- [x] The minimal inventory list displays the item name, rarity, and affix.
+- [x] The collected item remains in inventory after traversal back to the hub in the same run.
+- [x] The affix does not modify player stats in this slice.
+- [x] Automated tests verify guaranteed drop, pickup, inventory display data, and retention across area traversal.
 
 ## Verification plan and results
 
-Use GdUnit4 automated tests for the guaranteed drop, contact pickup, displayed item data, and inventory retention across the hub-to-exploration-to-hub traversal. Manually inspect the temporary ground item and inventory presentation in Godot Editor. No implementation or verification has been performed.
+Automated verification: all 13 GdUnit4 test cases pass. Coverage includes the guaranteed drop staying on walkable ground, contact pickup, inventory display data, and retention through exploration-to-hub traversal. The project owner confirmed the item, pickup, and inventory presentation work in Godot Editor.
 
 ## Documentation impact
 
@@ -91,10 +91,12 @@ None.
 
 ## Implementation notes
 
-The item name and affix are fixed sample content for the first slice. Do not infer an equip flow, stat application, or generalized loot-generation system from them.
+The item name and affix are fixed sample content for the first slice. Do not infer an equip flow, stat application, or generalized loot-generation system from them. The world item is an `Area2D` whose contact is handled by the inventory controller. The guaranteed drop is offset north of the enemy so it remains within the authored triangular ground boundary.
 
 ## Change record
 
 | Date | Update |
 | --- | --- |
 | 2026-10-14 | Accepted item example, guaranteed drop, click-to-approach/contact pickup, and display-only affix behavior. |
+| 2026-10-14 | Implementation started after the project owner reported that the combat drop appeared beyond the map boundary and could not be collected. |
+| 2026-10-14 | The project owner confirmed the ground item, contact pickup, and inventory in Godot Editor; ARPG-005 is complete. |
