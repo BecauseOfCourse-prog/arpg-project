@@ -11,8 +11,20 @@ config_version=5
 [application]
 
 config/name="arpg"
+run/main_scene="res://scenes/main/main.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1280
+window/size/window_height_override=720
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
 
 [physics]
 
@@ -21,4 +33,3 @@ config/icon="res://icon.svg"
 [rendering]
 
 rendering_device/driver.windows="d3d12"
-renderer/rendering_method="forward_plus"

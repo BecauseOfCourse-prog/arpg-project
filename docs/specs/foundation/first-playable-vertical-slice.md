@@ -33,7 +33,7 @@ The project has multiple connected systems. A small end-to-end slice will valida
 - The project can be launched and the slice verified from the Godot Editor; a packaged Windows build is not required.
 - Automated tests cover deterministic gameplay behavior in the slice.
 
-The selected automated test framework is GdUnit4 v6.2.x, compatible with the project's Godot 4.6 baseline. Its Windows command-line runner is `addons/gdUnit4/runtest.cmd`; configure `GODOT_BIN` to point to the Godot executable when running tests from a terminal. The plugin and test suite will be added with implementation work.
+The selected automated test framework is GdUnit4 v6.2.x, compatible with the project's Godot 4.6 baseline. The project vendors GdUnit4 v6.2.2, enables it as an editor plugin, and keeps test suites under `test/`. Its Windows command-line runner is `addons/gdUnit4/runtest.cmd`; configure `GODOT_BIN` or pass `--godot_binary` when running tests from a terminal. See `docs/TESTING.md` for the commands.
 
 ### Out of scope
 
@@ -93,7 +93,7 @@ Detailed input, combat, and drop rules are defined in ARPG-003 through ARPG-005.
 
 ## Verification plan and results
 
-After implementation is authorized, run the GdUnit4 tests for deterministic gameplay behavior and run the game in Godot Editor to follow the full loop from hub to exploration area, through combat and item pickup, and back to the hub. Use the editor playthrough to assess fixed-oblique presentation and whether traversal feels continuous. Record actual checks and results here. The test directory and exact test-suite selection will be set as scenes and tests are created. No implementation or verification has been performed.
+Run the GdUnit4 tests for deterministic gameplay behavior and run the game in Godot Editor to follow the full loop from hub to exploration area, through combat and item pickup, and back to the hub. Use the editor playthrough to assess fixed-oblique presentation and whether traversal feels continuous. Each implementation task records the checks relevant to its scope. Feature specifications define additional test coverage as those features are implemented.
 
 ## Documentation impact
 
@@ -105,7 +105,7 @@ After implementation is authorized, run the GdUnit4 tests for deterministic game
 
 ## Open questions
 
-The test directory and exact test-suite selection remain implementation details. No gameplay design questions remain open for this slice.
+No gameplay design questions remain open for this slice. The shared test directory is `test/`; relevant feature specifications define the required suites and cases.
 
 ## Implementation notes
 

@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/world_item.gd" id="1"]
+[ext_resource type="Resource" path="res://data/items/emberwood_bow.tres" id="2"]
+
+[node name="WorldItem" type="Node2D"]
+script = ExtResource("1")
+definition = ExtResource("2")
+
+[node name="PlaceholderSprite" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -10, 10, 0, 0, 10, -10, 0)
+color = Color(0.95, 0.72, 0.25, 1)

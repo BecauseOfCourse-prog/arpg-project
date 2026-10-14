@@ -27,7 +27,7 @@ docs/
 
 At the beginning of every task, Claude must read `CLAUDE.md`, `docs/PROJECT_CONTEXT.md`, `docs/BACKLOG.md`, and this workflow. It must then read the relevant active specification and any relevant ADRs before proposing or editing implementation. The user should not need to repeat decisions from prior chats: repository documentation is the durable context.
 
-When a task has no relevant specification, Claude should draft one before implementing a meaningful feature or behavior change. For a small correction that does not change behavior or project decisions, it may edit directly and keep the relevant docs accurate.
+When a task has no relevant specification, the developer should draft one before implementing a meaningful feature or behavior change. For a small correction that does not change behavior or project decisions, it may edit directly and keep the relevant docs accurate.
 
 ## Change lifecycle
 
