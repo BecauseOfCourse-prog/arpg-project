@@ -3,14 +3,14 @@
 - **Status:** Accepted
 - **Owner:** Project owner
 - **Created:** 2026-10-14
-- **Related specifications:** None
+- **Related specifications:** [ARPG-002: Godot Project Structure and Scene Conventions](project-structure.md); [ARPG-003: Player Movement and Navigation](player-movement-navigation.md); [ARPG-004: Basic Combat](basic-combat.md); [ARPG-005: Equipment Drop and Minimal Inventory](loot-and-inventory.md)
 - **Related ADRs:** [ADR-0001: Initial technology stack](../../decisions/ADR-0001-initial-technology-stack.md); [ADR-0002: Game system boundaries](../../decisions/ADR-0002-game-system-boundaries.md)
 
 ## Summary
 
 Define the smallest playable segment that demonstrates the game's fixed-oblique 2D presentation and its core exploration, combat, and loot loop. The player starts in the safe hub, traverses seamlessly into one nearby exploration area, defeats one enemy, collects an equipment drop, and returns to the hub.
 
-This specification defines the accepted slice scope. Detailed movement, combat, and item rules are covered by focused specifications before their implementation.
+This specification defines the accepted slice scope. Detailed movement, combat, and item rules are defined in the linked focused specifications.
 
 ## Motivation
 
@@ -21,13 +21,19 @@ The project has multiple connected systems. A small end-to-end slice will valida
 ### In scope
 
 - One playable character in a single initial class configuration.
+- The game starts directly in the hub; a main menu is deferred to future work.
 - A safe hub area and one connected exploration area in the same continuously traversable world.
+- The hub is a simple safe area; buildings and service locations are deferred.
 - Mouse-led player movement and one basic attack.
-- One enemy type that can be fought and defeated.
+- One encounter with one enemy instance of a single enemy type; repeat encounters are not required.
 - A defeated enemy can drop one simple equipment item with a predefined rarity and affix example; a broad pool of randomized affixes is not part of this slice.
-- The player can collect the dropped item and see it in a minimal inventory/equipment interface.
+- The player can collect the dropped item and see it in a minimal inventory interface; equipping the item is not required.
 - The player can return to the hub through the connected world; hostile enemies do not enter the hub.
 - Temporary 2D art may be used, but it must communicate the agreed fixed oblique perspective.
+- The project can be launched and the slice verified from the Godot Editor; a packaged Windows build is not required.
+- Automated tests cover deterministic gameplay behavior in the slice.
+
+The selected automated test framework is GdUnit4 v6.2.x, compatible with the project's Godot 4.6 baseline. Its Windows command-line runner is `addons/gdUnit4/runtest.cmd`; configure `GODOT_BIN` to point to the Godot executable when running tests from a terminal. The plugin and test suite will be added with implementation work.
 
 ### Out of scope
 
@@ -36,14 +42,16 @@ The project has multiple connected systems. A small end-to-end slice will valida
 - Keyboard-triggered abilities and potion use.
 - Production-quality art, a complete UI, extensive balance, and large content catalogs.
 - Multiplayer and non-Windows platforms.
-- Save/load implementation. Saving and loading remain required for the full game and are handled separately under ARPG-009.
+- Player death/defeat and restart flows.
+- A main menu, buildings, and hub services.
+- Save/load implementation in this slice. Saving and loading remain required for the full game and are handled separately under ARPG-009.
 
 
 ## User-facing behavior
 
-In the slice, the player begins in a safe hub, moves into a connected exploration area, fights one enemy with a basic attack, collects an equipment drop, and returns to the hub without entering a separate hub mode. The hub remains safe throughout play.
+In the slice, the game starts directly in a simple safe hub. The player moves into one connected exploration area, fights one enemy encounter with a basic attack, collects an equipment drop into a minimal inventory, and returns to the hub without entering a separate hub mode. The hub remains safe throughout play. Player death/defeat and restart flows are not part of this slice.
 
-Exact input bindings, combat rules, item statistics, and visual asset requirements are not defined by this draft.
+The movement, combat, and loot behaviors are detailed in ARPG-003, ARPG-004, and ARPG-005. Exact scene geometry, tuning of attack range to character scale, and final visual assets remain implementation and playtest decisions.
 
 ## Rules and data
 
@@ -51,7 +59,7 @@ Exact input bindings, combat rules, item statistics, and visual asset requiremen
 - The hub is part of the traversable world and excludes hostile enemies, as accepted in the project architecture.
 - Item definitions and runtime item instances follow the ownership boundaries in ADR-0002.
 - The slice needs a minimal authored set of content: one player configuration, one enemy definition, one exploration area connected to the hub, and one equipment item with a predefined rarity and affix example.
-- Exact input bindings, combat rules, item stats, player/enemy stats, and drop rules belong in their focused follow-up specifications; broad rarity and affix variation is out of scope for this slice.
+- Movement, combat, and loot rules are defined in ARPG-003, ARPG-004, and ARPG-005. Broad rarity and affix variation remains out of scope for this slice.
 
 ## Affected systems
 
@@ -71,30 +79,33 @@ Exact input bindings, combat rules, item statistics, and visual asset requiremen
 
 ## Acceptance criteria
 
-Detailed input, combat, and drop rules belong in follow-up specifications.
+Detailed input, combat, and drop rules are defined in ARPG-003 through ARPG-005.
 
 - [ ] The player can move from the hub into the connected exploration area and back without a separate hub mode or a visible interruption that breaks the seamless-world experience.
 - [ ] Hostile enemies do not enter the hub.
 - [ ] The player can use mouse input to move and perform a basic attack in the exploration area.
 - [ ] The enemy can be defeated, and defeat produces one equipment item with the specified example rarity and affix.
-- [ ] The player can collect the equipment drop and see it in the inventory/equipment interface.
+- [ ] The player can collect the equipment drop and see it in the minimal inventory interface.
 - [ ] The player can return to the hub with the collected item still in inventory.
 - [ ] The slice uses 2D visuals composed for the agreed fixed oblique perspective.
+- [ ] The project launches from the Godot Editor directly into the hub.
+- [ ] Automated tests cover movement and obstacle navigation, attack targeting/approach/repetition/cancellation, enemy defeat and drop, and item pickup and inventory retention after returning to the hub.
 
 ## Verification plan and results
 
-After implementation is authorized, verify the acceptance criteria by running the game and following the player loop from hub to exploration area, through combat and item pickup, and back to the hub. Record actual checks and results here. No implementation or verification has been performed for this draft.
+After implementation is authorized, run the GdUnit4 tests for deterministic gameplay behavior and run the game in Godot Editor to follow the full loop from hub to exploration area, through combat and item pickup, and back to the hub. Use the editor playthrough to assess fixed-oblique presentation and whether traversal feels continuous. Record actual checks and results here. The test directory and exact test-suite selection will be set as scenes and tests are created. No implementation or verification has been performed.
 
 ## Documentation impact
 
 - [ ] Update `docs/PROJECT_CONTEXT.md` if the accepted baseline changes.
 - [ ] Add or update an ADR if a lasting architectural decision is made.
 - [x] Add this specification to `docs/specs/README.md` and link it from `docs/BACKLOG.md`.
-- [ ] Create focused follow-up specifications for movement/navigation, combat, and loot rules before implementation of those systems.
+- [x] Select and document the automated test framework and base Windows test runner before gameplay implementation.
+- [x] Create focused follow-up specifications for movement/navigation, combat, and loot rules before implementation of those systems.
 
 ## Open questions
 
-None remain that affect the proposed slice boundary. Detailed input, combat, and drop rules are deferred to focused follow-up specifications.
+The test directory and exact test-suite selection remain implementation details. No gameplay design questions remain open for this slice.
 
 ## Implementation notes
 
@@ -107,3 +118,6 @@ This remains a behavior-level specification. Do not infer exact scene trees, nod
 | 2026-10-14 | Initial draft created from the accepted project context and system boundaries. |
 | 2026-10-14 | Kept save/load in ARPG-009; deferred abilities and potions to ARPG-008; set the slice loop to one simple equipment drop and a return to the hub. |
 | 2026-10-14 | Scope accepted by the project owner. |
+| 2026-10-14 | Clarified slice boundaries: direct hub start, simple hub, one enemy encounter, inventory display without equipping, temporary art, Editor launch, and no menu, death/restart, or save/load. |
+| 2026-10-14 | Selected GdUnit4 v6.2.x and required automated coverage for deterministic movement, combat, defeat/drop, pickup, and inventory-retention behavior; visual presentation remains manually checked. |
+| 2026-10-14 | Closed movement, combat, and loot behavior through accepted ARPG-003, ARPG-004, and ARPG-005 specifications. |

@@ -21,6 +21,7 @@ The high-level system boundaries in this document are accepted and recorded in `
 - Initial target: Windows PC, single-player.
 - Presentation: 2D sprites authored for a fixed oblique view.
 - Authored gameplay content should be separate from gameplay logic; Godot Resources are the current preferred format.
+- The initial scene convention uses one continuous world scene containing the hub and connected exploration area, with a main game scene and reusable player, enemy, and item scenes. See the accepted ARPG-002 specification for the agreed scope.
 - The game must support saving and loading.
 
 See `docs/PROJECT_CONTEXT.md` and `docs/decisions/ADR-0001-initial-technology-stack.md` for the full accepted baseline.

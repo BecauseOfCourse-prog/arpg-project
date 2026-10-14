@@ -62,6 +62,7 @@ When a task has no relevant specification, Claude should draft one before implem
 ### 5. Verify and close
 
 - Check every acceptance criterion using the verification requested by the user or defined by the project.
+- For deterministic gameplay behavior, add or update automated tests with the project's selected test framework and run them for the change. Use manual editor playthroughs to check visual presentation and behavior that is difficult to assert automatically.
 - Do not claim a criterion passed without evidence. Record checks performed and known gaps in the spec.
 - Update `PROJECT_CONTEXT.md` when the accepted baseline, terminology, or lasting constraints change.
 - Mark the spec `Complete` only when its scoped work and required documentation updates are complete; otherwise use `In Progress` or `Blocked` and explain why.

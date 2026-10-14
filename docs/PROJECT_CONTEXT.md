@@ -23,6 +23,8 @@ Create a single-player action RPG inspired by the broad genre conventions of Dia
 - Engine: Godot 4.6 Stable.
 - Gameplay language: GDScript, using static typing for declared variables, parameters, and return values where practical.
 - Version control: Git.
+- The Git repository root is also the Godot project root; project settings and game assets live beside `docs/`.
+- Use one continuous world scene for the safe hub and connected exploration area, with a main game scene and reusable player, enemy, and item scenes.
 - Keep gameplay content data (for example classes, items, affixes, enemies, abilities, and areas) separate from gameplay logic. Prefer Godot Resources for authored game data unless a specification establishes a justified alternative.
 - The game must support saving and loading. The save format and persistence behavior will be specified separately.
 - Project architecture, asset pipeline, testing strategy, and release pipeline will be specified as needed.

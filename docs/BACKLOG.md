@@ -24,10 +24,10 @@ This is the canonical, prioritized inventory of proposed and planned work. Entri
 | ID | Item / outcome | Priority | Status | Depends on | Specification |
 | --- | --- | --- | --- | --- | --- |
 | ARPG-001 | Define the first playable vertical slice and its measurable scope. | P0 | Specified | — | [Accepted specification](specs/foundation/first-playable-vertical-slice.md) |
-| ARPG-002 | Establish project structure, scene conventions, and data-authoring approach. | P0 | Proposed | ARPG-001 | — |
-| ARPG-003 | Implement player movement and mouse interaction for the fixed oblique 2D projection. | P0 | Proposed | ARPG-001, ARPG-002; coordinate and navigation rules | — |
-| ARPG-004 | Implement a basic player attack and one enemy with health, damage, and defeat behavior. | P0 | Proposed | ARPG-001, ARPG-002, ARPG-003; combat rules | — |
-| ARPG-005 | Add item drops, pickup, inventory, equipment, rarity, and a first affix. | P1 | Proposed | ARPG-001, ARPG-002, ARPG-004; item and loot rules | — |
+| ARPG-002 | Establish project structure, scene conventions, and data-authoring approach. | P0 | Specified | ARPG-001 | [Accepted specification](specs/foundation/project-structure.md) |
+| ARPG-003 | Implement player movement and mouse interaction for the fixed oblique 2D projection. | P0 | Specified | ARPG-001, ARPG-002 | [Accepted specification](specs/foundation/player-movement-navigation.md) |
+| ARPG-004 | Implement a basic player attack and one enemy with health, damage, and defeat behavior. | P0 | Specified | ARPG-001, ARPG-002, ARPG-003 | [Accepted specification](specs/foundation/basic-combat.md) |
+| ARPG-005 | Add a guaranteed equipment drop, pickup, and minimal inventory display. | P1 | Specified | ARPG-001, ARPG-002, ARPG-004 | [Accepted specification](specs/foundation/loot-and-inventory.md) |
 | ARPG-006 | Add an explorable area seamlessly connected to a safe hub area in the same traversable world. | P1 | Proposed | ARPG-001, ARPG-002, ARPG-003; area and safe-zone rules | — |
 | ARPG-007 | Add a hub vendor flow for selling loot and buying a potion or item. | P1 | Proposed | ARPG-005, ARPG-006; currency and vendor rules | — |
 | ARPG-008 | Add a keyboard-triggered ability and potion use. | P1 | ARPG-003, ARPG-004; input and resource rules | — |
