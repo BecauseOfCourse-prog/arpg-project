@@ -4,7 +4,7 @@
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md); [ARPG-005: Equipment Drop and Minimal Inventory](loot-and-inventory.md)
-- **Related ADRs:** [ADR-0002: Game System Boundaries](../../decisions/ADR-0002-game-system-boundaries.md); [ADR-0003: Save Data Compatibility Policy](../../decisions/ADR-0003-save-data-compatibility-policy.md)
+- **Related ADRs:** [ADR-0002: Game System Boundaries](../../decisions/ADR-0002-game-system-boundaries.md); [ADR-0003: Save Data Compatibility Policy](../../decisions/ADR-0003-save-data-compatibility-policy.md); [ADR-0004: Player Gold Balance Ownership](../../decisions/ADR-0004-player-gold-balance-ownership.md)
 
 ## Summary
 
@@ -36,7 +36,7 @@ The player can save manually to one of three manual slots from the pause menu, a
 
 - Save data must respect system ownership in ADR-0002; the Save & Load system coordinates serialization and restoration through explicit contracts.
 - Save data must be durable across application shutdown and restart.
-- Character progression must persist across sessions, including level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, and equipped items. Inventory/items and quest progress must also persist.
+- Character progression must persist across sessions, including level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, and the numeric gold balance owned by Player Character & Progression. Inventory/items and quest progress must also persist.
 - Do not persist the current location, character position, or world changes; loading restores character and progression data only.
 - Provide three manual save slots and one separate autosave slot.
 - Allow manual saving to a selected slot from the pause menu only.
@@ -66,7 +66,7 @@ The player can save manually to one of three manual slots from the pause menu, a
 ## Acceptance criteria
 
 - [ ] The player can save and restore progress across application sessions using the agreed save trigger and resume flow.
-- [ ] Character level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, inventory/items, and quest progress are restored consistently without duplicate or lost owned state; location, position, and world changes are not restored.
+- [ ] Character level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, gold balance, inventory/items, and quest progress are restored consistently without duplicate or lost owned state; location, position, and world changes are not restored.
 - [ ] The player can use three manual slots and a separate autosave slot; autosave occurs on exit, quest completion, level-up, and important story milestones.
 - [ ] The player can manually save to a selected slot from the pause menu only, and select a save slot for loading from the main menu.
 - [ ] If no save is available, the main menu offers New Game and disables loading.
@@ -100,3 +100,4 @@ Do not assume a save format, storage path, or system serialization API before im
 | 2026-10-14 | Project owner selected quest completion, level-up, and important story milestones as autosave events; if no save is available, the main menu offers New Game and disables loading. |
 | 2026-10-14 | Project owner initially selected manual saving from both the pause menu and main menu; all product behavior questions were resolved and the specification was accepted. |
 | 2026-10-14 | Project owner corrected the manual save entry point: manual saving is available from the pause menu only; the main menu is for selecting and loading saves. |
+| 2026-10-14 | Gold balance ownership was assigned to Player Character & Progression and added to the persisted character state. |

@@ -29,7 +29,8 @@ Create a single-player action RPG inspired by the broad genre conventions of Dia
 - Keep gameplay content data (for example classes, items, affixes, enemies, abilities, and areas) separate from gameplay logic. Prefer Godot Resources for authored game data unless a specification establishes a justified alternative.
 - Automated tests use GdUnit4 6.2.x. The Windows runner and test layout are documented in `docs/TESTING.md`.
 - First-slice movement uses left-button click-to-move and hold-to-follow-cursor, with free directional movement and automatic navigation around walls and large environment obstacles.
-- The game must support saving and loading. The accepted full-game behavior is specified in `docs/specs/foundation/save-load.md`: three manual slots, one autosave slot, persistent character progression/items/quests, and no persistence of location, position, or world changes. The save format is deferred to implementation planning.
+- The game must support saving and loading. The accepted full-game behavior is specified in `docs/specs/foundation/save-load.md`: three manual slots, one autosave slot, persistent character progression/items/quests, and no persistence of location, position, or world changes. Player Character & Progression owns the numeric gold balance and saves it with character progression ([ADR-0004](decisions/ADR-0004-player-gold-balance-ownership.md)). The save format is deferred to implementation planning.
+- The safe hub supports vendor transactions through click-to-open buy/sell windows. Fixed-stock vendors have unlimited quantities; changing-stock vendors have limited stock refreshed each in-game day. Equipment and specified consumables can be sold for half their purchase price. See `docs/specs/foundation/hub-vendor.md` for the accepted behavior.
 - The asset pipeline and release pipeline will be specified as needed.
 
 ## Core gameplay pillars

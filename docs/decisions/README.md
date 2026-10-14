@@ -16,6 +16,7 @@ ADRs capture decisions with lasting technical or architectural consequences. The
 | [ADR-0001: Initial technology stack](ADR-0001-initial-technology-stack.md) | Accepted | Godot 4.6 Stable, typed GDScript, 2D sprites drawn for a fixed oblique perspective, Windows PC, single-player, and Git. |
 | [ADR-0002: Game system boundaries](ADR-0002-game-system-boundaries.md) | Accepted | Defines the high-level gameplay systems and treats the safe hub as part of the continuous traversable world. |
 | [ADR-0003: Save Data Compatibility Policy](ADR-0003-save-data-compatibility-policy.md) | Accepted | Unusable or incompatible saves are marked unavailable without affecting other save slots. |
+| [ADR-0004: Player Gold Balance Ownership](ADR-0004-player-gold-balance-ownership.md) | Accepted | Player Character & Progression owns the player's numeric gold balance. |
 
 ## Naming
 
