@@ -12,3 +12,4 @@ category = 0
 purchase_price = 100
 inventory_width = 2
 inventory_height = 3
+stackable = false

@@ -1,7 +1,7 @@
 extends Control
 class_name InventoryGridView
 
-signal item_clicked(inventory_index: int)
+signal item_clicked(inventory_index: int, sell_entire_stack: bool)
 
 const COLUMNS := 10
 const ROWS := 4
@@ -28,7 +28,7 @@ func _gui_input(event: InputEvent) -> void:
 		var item := inventory.collected_items[index]
 		var origin := inventory.item_positions[index]
 		if column >= origin.x and column < origin.x + item.inventory_width and row >= origin.y and row < origin.y + item.inventory_height:
-			item_clicked.emit(index)
+			item_clicked.emit(index, event.shift_pressed)
 			accept_event()
 			return
 
@@ -50,6 +50,9 @@ func _draw() -> void:
 		draw_rect(item_rect, Color(0.27, 0.41, 0.5, 1), true)
 		draw_rect(item_rect, Color(0.72, 0.8, 0.84, 1), false, 1.0)
 		draw_string(ThemeDB.fallback_font, item_rect.position + Vector2(4, 17), item.display_name.left(12), HORIZONTAL_ALIGNMENT_LEFT, item_rect.size.x - 8, 12, Color.WHITE)
+		var count := inventory.item_counts[index]
+		if count > 1:
+			draw_string(ThemeDB.fallback_font, item_rect.position + Vector2(item_rect.size.x - 25, item_rect.size.y - 3), "×%d" % count, HORIZONTAL_ALIGNMENT_RIGHT, 21, 10, Color(1, 0.9, 0.55, 1))
 
 func refresh() -> void:
 	queue_redraw()

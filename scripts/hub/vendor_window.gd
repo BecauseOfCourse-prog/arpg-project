@@ -71,10 +71,10 @@ func _refresh() -> void:
 				stock_labels.append("Unlimited" if service.definition.stock_mode == VendorDefinition.StockMode.FIXED_UNLIMITED else "Stock: %d" % service.remaining_stock(index))
 			_offer_grid.call("show_offers", service.definition.offers, stock_labels)
 
-func sell_inventory_item(index: int) -> void:
+func sell_inventory_item(index: int, sell_entire_stack: bool = false) -> void:
 	if not visible or service == null:
 		return
-	service.sell(index)
+	service.sell(index, sell_entire_stack)
 	_refresh()
 
 func _on_grid_item_clicked(index: int) -> void:

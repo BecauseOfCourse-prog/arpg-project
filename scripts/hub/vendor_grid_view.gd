@@ -9,6 +9,7 @@ const SLOT_SIZE := Vector2(32, 32)
 const GAP := 2.0
 
 var _items: Array[ItemDefinition] = []
+var _counts: Array[int] = []
 var _prices: Array[int] = []
 var _stock_labels: Array[String] = []
 var _item_positions: Array[Vector2i] = []
@@ -20,16 +21,19 @@ func _ready() -> void:
 
 func show_offers(offers: Array[VendorOffer], stock_labels: Array[String]) -> void:
 	_items.clear()
+	_counts.clear()
 	_prices.clear()
 	_stock_labels.clear()
 	for index in range(offers.size()):
 		var offer := offers[index]
 		if offer == null:
 			_items.append(null)
+			_counts.append(0)
 			_prices.append(0)
 			_stock_labels.append("")
 			continue
 		_items.append(offer.item)
+		_counts.append(1)
 		_prices.append(offer.purchase_price)
 		_stock_labels.append(stock_labels[index] if index < stock_labels.size() else "")
 	_rebuild_positions()
@@ -37,10 +41,12 @@ func show_offers(offers: Array[VendorOffer], stock_labels: Array[String]) -> voi
 
 func show_buyback(entries: Array[BuybackEntry]) -> void:
 	_items.clear()
+	_counts.clear()
 	_prices.clear()
 	_stock_labels.clear()
 	for entry: BuybackEntry in entries:
 		_items.append(entry.item if entry != null else null)
+		_counts.append(entry.quantity if entry != null else 0)
 		_prices.append(entry.repurchase_price if entry != null else 0)
 		_stock_labels.append("Buy back")
 	_rebuild_positions()
@@ -70,6 +76,8 @@ func _draw() -> void:
 		draw_rect(rect, Color(0.82, 0.68, 0.39, 1), false, 1.0)
 		draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 15), item.display_name.left(12), HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, 11, Color.WHITE)
 		draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 28), "%d gold" % _prices[index], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, 10, Color(1, 0.88, 0.55, 1))
+		if _counts[index] > 1:
+			draw_string(ThemeDB.fallback_font, rect.position + Vector2(rect.size.x - 20, 14), "×%d" % _counts[index], HORIZONTAL_ALIGNMENT_RIGHT, 18, 9, Color(1, 0.9, 0.55, 1))
 		if not _stock_labels[index].is_empty():
 			draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 40), _stock_labels[index], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, 9, Color.WHITE)
 

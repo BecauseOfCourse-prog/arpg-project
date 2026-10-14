@@ -22,7 +22,8 @@ func test_world_wires_vendor_window_and_class_starting_gold() -> void:
 	window.call("_on_grid_item_clicked", 0)
 	assert_int(progression.gold).is_equal(75)
 	assert_int(inventory.collected_items.size()).is_equal(1)
-	inventory.item_clicked.emit(0)
+	assert_int(inventory.item_counts[0]).is_equal(1)
+	inventory.item_clicked.emit(0, false)
 	assert_int(progression.gold).is_equal(87)
 	assert_int(inventory.collected_items.size()).is_zero()
 	assert_bool((window.get("_status") as Label).text.contains("Продано")).is_true()
@@ -31,6 +32,12 @@ func test_world_wires_vendor_window_and_class_starting_gold() -> void:
 	window.call("_on_grid_item_clicked", 0)
 	assert_int(progression.gold).is_equal(75)
 	assert_int(inventory.collected_items.size()).is_equal(1)
+	assert_int(inventory.item_counts[0]).is_equal(1)
+	var bow := load("res://data/items/emberwood_bow.tres") as ItemDefinition
+	var potion := load("res://data/items/health_potion.tres") as ItemDefinition
+	assert_bool(bow.stackable).is_false()
+	assert_bool(potion.stackable).is_true()
+	assert_int(potion.max_stack_size).is_equal(12)
 	main.queue_free()
 
 func test_purchase_moves_gold_and_item_once() -> void:
@@ -190,13 +197,76 @@ func test_fixed_stock_offer_has_unlimited_quantity() -> void:
 	progression.free()
 	service.free()
 
-func _item(name: String, category: ItemDefinition.ItemCategory, price: int, size: Vector2i) -> ItemDefinition:
+func test_stackable_consumables_share_a_slot_up_to_twelve() -> void:
+	var inventory := InventoryController.new()
+	var potion := _item("Potion", ItemDefinition.ItemCategory.CONSUMABLE, 25, Vector2i(1, 1), true)
+	assert_bool(inventory.add_item(potion, 12)).is_true()
+	assert_int(inventory.collected_items.size()).is_equal(1)
+	assert_int(inventory.item_counts[0]).is_equal(12)
+	assert_bool(inventory.can_add_item(potion)).is_true()
+	assert_bool(inventory.add_item(potion)).is_true()
+	assert_int(inventory.collected_items.size()).is_equal(2)
+	assert_int(inventory.item_counts[0]).is_equal(12)
+	assert_int(inventory.item_counts[1]).is_equal(1)
+	assert_bool(inventory.item_positions[0] != inventory.item_positions[1]).is_true()
+	inventory.free()
+
+func test_nonstackable_equipment_uses_one_slot_per_copy() -> void:
+	var inventory := InventoryController.new()
+	var bow := _item("Bow", ItemDefinition.ItemCategory.EQUIPMENT, 100, Vector2i(2, 3))
+	assert_bool(inventory.add_item(bow)).is_true()
+	assert_bool(inventory.add_item(bow)).is_true()
+	assert_int(inventory.collected_items.size()).is_equal(2)
+	assert_int(inventory.item_counts[0]).is_equal(1)
+	assert_int(inventory.item_counts[1]).is_equal(1)
+	assert_bool(inventory.item_positions[0] != inventory.item_positions[1]).is_true()
+	inventory.free()
+
+func test_sale_click_sells_one_and_shift_sale_sells_the_rest_of_stack() -> void:
+	var inventory := InventoryController.new()
+	var progression := PlayerProgression.new()
+	var potion := _item("Potion", ItemDefinition.ItemCategory.CONSUMABLE, 25, Vector2i(1, 1), true)
+	var service := VendorService.new()
+	service.configure(VendorDefinition.new(), inventory, progression)
+	assert_bool(inventory.add_item(potion, 3)).is_true()
+	assert_bool(service.sell(0)).is_true()
+	assert_int(inventory.item_counts[0]).is_equal(2)
+	assert_int(progression.gold).is_equal(12)
+	assert_int(service.buyback_entries[0].quantity).is_equal(1)
+	assert_bool(service.sell(0, true)).is_true()
+	assert_int(inventory.collected_items.size()).is_zero()
+	assert_int(progression.gold).is_equal(36)
+	assert_int(service.buyback_entries.size()).is_equal(1)
+	assert_int(service.buyback_entries[0].quantity).is_equal(3)
+	assert_int(service.buyback_entries[0].repurchase_price).is_equal(36)
+	inventory.free()
+	progression.free()
+	service.free()
+
+func test_buyback_restores_full_stack_quantity() -> void:
+	var inventory := InventoryController.new()
+	var progression := PlayerProgression.new()
+	var potion := _item("Potion", ItemDefinition.ItemCategory.CONSUMABLE, 25, Vector2i(1, 1), true)
+	var service := VendorService.new()
+	service.configure(VendorDefinition.new(), inventory, progression)
+	assert_bool(inventory.add_item(potion, 12)).is_true()
+	assert_bool(service.sell(0, true)).is_true()
+	assert_bool(service.buyback(0)).is_true()
+	assert_int(inventory.collected_items.size()).is_equal(1)
+	assert_int(inventory.item_counts[0]).is_equal(12)
+	inventory.free()
+	progression.free()
+	service.free()
+
+func _item(name: String, category: ItemDefinition.ItemCategory, price: int, size: Vector2i, stackable: bool = false) -> ItemDefinition:
 	var item := ItemDefinition.new()
 	item.display_name = name
 	item.category = category
 	item.purchase_price = price
 	item.inventory_width = size.x
 	item.inventory_height = size.y
+	item.stackable = stackable
+	item.max_stack_size = 12
 	return item
 
 func _service(inventory: InventoryController, progression: PlayerProgression, item: ItemDefinition, price: int, quantity: int) -> VendorService:

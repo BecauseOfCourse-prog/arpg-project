@@ -11,3 +11,5 @@ category = 1
 purchase_price = 25
 inventory_width = 1
 inventory_height = 1
+stackable = true
+max_stack_size = 12
