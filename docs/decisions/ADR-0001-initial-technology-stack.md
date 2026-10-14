@@ -43,4 +43,6 @@ This stack was selected for the initial scope because Godot provides an integrat
 
 - [x] Record the current baseline in `docs/PROJECT_CONTEXT.md`.
 - [x] Establish the SDD process and Claude context instructions.
-- [ ] Specify coordinate conventions, sprite scale, navigation behavior, and save/load behavior before implementing those systems.
+- [x] Specify movement and navigation behavior before implementing them (ARPG-003).
+- [x] Specify save/load behavior before implementing it (ARPG-009; implementation remains deferred).
+- [ ] Specify coordinate conventions and sprite scale before replacing the temporary placeholder visuals.

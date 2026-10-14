@@ -34,4 +34,5 @@ Player Character & Progression owns the player's numeric gold balance. Hub Servi
 
 ## Follow-up work
 
-- [ ] Define class-specific starting gold and the owning system's currency transaction contract.
+- [x] Define the owning system's currency transaction contract and author starting gold for the current Adventurer definition (ARPG-007).
+- [ ] Author starting gold values when additional character classes are introduced.

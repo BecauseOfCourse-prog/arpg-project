@@ -23,7 +23,7 @@ This is the canonical, prioritized inventory of proposed and planned work. Entri
 
 | ID | Item / outcome | Priority | Status | Depends on | Specification |
 | --- | --- | --- | --- | --- | --- |
-| ARPG-001 | Define the first playable vertical slice and its measurable scope. | P0 | Specified | — | [Accepted specification](specs/foundation/first-playable-vertical-slice.md) |
+| ARPG-001 | Define the first playable vertical slice and its measurable scope. | P0 | Done | — | [Completed specification](specs/foundation/first-playable-vertical-slice.md) |
 | ARPG-002 | Establish project structure, scene conventions, and data-authoring approach. | P0 | Done | ARPG-001 | [Completed specification](specs/foundation/project-structure.md) |
 | ARPG-003 | Implement player movement and mouse interaction for the fixed oblique 2D projection. | P0 | Done | ARPG-001, ARPG-002 | [Completed specification](specs/foundation/player-movement-navigation.md) |
 | ARPG-004 | Implement a basic player attack and one enemy with health, damage, and defeat behavior. | P0 | Done | ARPG-001, ARPG-002, ARPG-003 | [Completed specification](specs/foundation/basic-combat.md) |
@@ -43,4 +43,4 @@ This is the canonical, prioritized inventory of proposed and planned work. Entri
 - Split an item when it contains work that can be specified, implemented, and completed independently.
 - Add a specification link when an item reaches `Specified`; maintain both statuses as work progresses.
 - Update dependencies when the plan changes. A dependency can be waived only with a recorded rationale in the relevant specification.
-- Treat these entries as an initial planning proposal. The first vertical-slice specification should confirm, narrow, or reorder them before implementation begins.
+- Keep backlog entries aligned with accepted specifications and implementation status; revisit priorities and dependencies when project scope changes.

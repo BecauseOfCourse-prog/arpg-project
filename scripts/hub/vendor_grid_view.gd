@@ -13,10 +13,15 @@ var _counts: Array[int] = []
 var _prices: Array[int] = []
 var _stock_labels: Array[String] = []
 var _item_positions: Array[Vector2i] = []
+var _hovered_item_index := -1
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(COLUMNS * SLOT_SIZE.x + (COLUMNS - 1) * GAP, ROWS * SLOT_SIZE.y + (ROWS - 1) * GAP)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	mouse_exited.connect(func() -> void:
+		_hovered_item_index = -1
+		queue_redraw()
+	)
 	_rebuild_positions()
 
 func show_offers(offers: Array[VendorOffer], stock_labels: Array[String]) -> void:
@@ -74,23 +79,38 @@ func _draw() -> void:
 		var rect := Rect2(top_left, size)
 		draw_rect(rect, Color(0.34, 0.3, 0.2, 1), true)
 		draw_rect(rect, Color(0.82, 0.68, 0.39, 1), false, 1.0)
-		draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 15), item.display_name.left(12), HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, 11, Color.WHITE)
-		draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 28), "%d gold" % _prices[index], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, 10, Color(1, 0.88, 0.55, 1))
+		var name_width := rect.size.x - 8 if _counts[index] <= 1 else rect.size.x - 30
+		draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 15), item.display_name.left(12), HORIZONTAL_ALIGNMENT_LEFT, name_width, 11, Color.WHITE)
+		draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 28), "%dg" % _prices[index], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, 10, Color(1, 0.88, 0.55, 1))
 		if _counts[index] > 1:
-			draw_string(ThemeDB.fallback_font, rect.position + Vector2(rect.size.x - 20, 14), "×%d" % _counts[index], HORIZONTAL_ALIGNMENT_RIGHT, 18, 9, Color(1, 0.9, 0.55, 1))
-		if not _stock_labels[index].is_empty():
-			draw_string(ThemeDB.fallback_font, rect.position + Vector2(4, 40), _stock_labels[index], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, 9, Color.WHITE)
+			var count_badge := Rect2(rect.position + Vector2(rect.size.x - 25, 2), Vector2(23, 12))
+			draw_rect(count_badge, Color(0.08, 0.08, 0.08, 0.9), true)
+			draw_string(ThemeDB.fallback_font, count_badge.position + Vector2(1, 10), "×%d" % _counts[index], HORIZONTAL_ALIGNMENT_CENTER, count_badge.size.x - 2, 9, Color(1, 0.9, 0.55, 1))
+	if _hovered_item_index >= 0 and _hovered_item_index < _items.size():
+		_draw_item_tooltip(_hovered_item_index)
 
 func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var hovered_index := _item_index_at(event.position)
+		if hovered_index != _hovered_item_index:
+			_hovered_item_index = hovered_index
+			queue_redraw()
+		return
 	if not event is InputEventMouseButton or event.button_index != MOUSE_BUTTON_LEFT or not event.pressed:
 		return
+	var clicked_index := _item_index_at(event.position)
+	if clicked_index >= 0:
+		item_clicked.emit(clicked_index)
+		accept_event()
+
+func _item_index_at(position: Vector2) -> int:
 	var pitch := SLOT_SIZE + Vector2(GAP, GAP)
-	var column := floori(event.position.x / pitch.x)
-	var row := floori(event.position.y / pitch.y)
+	var column := floori(position.x / pitch.x)
+	var row := floori(position.y / pitch.y)
 	if column < 0 or column >= COLUMNS or row < 0 or row >= ROWS:
-		return
-	if fmod(event.position.x, pitch.x) > SLOT_SIZE.x or fmod(event.position.y, pitch.y) > SLOT_SIZE.y:
-		return
+		return -1
+	if fmod(position.x, pitch.x) > SLOT_SIZE.x or fmod(position.y, pitch.y) > SLOT_SIZE.y:
+		return -1
 	for index in range(mini(_items.size(), _item_positions.size())):
 		var item := _items[index]
 		if item == null or _item_positions[index].x < 0:
@@ -99,9 +119,30 @@ func _gui_input(event: InputEvent) -> void:
 		var width := clampi(item.inventory_width, 1, COLUMNS)
 		var height := clampi(item.inventory_height, 1, ROWS)
 		if column >= origin.x and column < origin.x + width and row >= origin.y and row < origin.y + height:
-			item_clicked.emit(index)
-			accept_event()
-			return
+			return index
+	return -1
+
+func _draw_item_tooltip(index: int) -> void:
+	var item := _items[index]
+	if item == null:
+		return
+	var lines := PackedStringArray([item.display_name, "%d gold" % _prices[index]])
+	if _counts[index] > 1:
+		lines.append("Количество: %d" % _counts[index])
+	if not _stock_labels[index].is_empty():
+		lines.append(_stock_labels[index])
+	var tooltip_size := Vector2(190, lines.size() * 17 + 8)
+	var mouse_position := get_local_mouse_position() + Vector2(12, 12)
+	if mouse_position.x + tooltip_size.x > size.x:
+		mouse_position.x = size.x - tooltip_size.x
+	if mouse_position.y + tooltip_size.y > size.y:
+		mouse_position.y = size.y - tooltip_size.y
+	mouse_position.x = maxf(0.0, mouse_position.x)
+	mouse_position.y = maxf(0.0, mouse_position.y)
+	draw_rect(Rect2(mouse_position, tooltip_size), Color(0.05, 0.05, 0.06, 0.96), true)
+	draw_rect(Rect2(mouse_position, tooltip_size), Color(0.72, 0.65, 0.46, 1), false, 1.0)
+	for line_index in range(lines.size()):
+		draw_string(ThemeDB.fallback_font, mouse_position + Vector2(6, 18 + line_index * 17), lines[line_index], HORIZONTAL_ALIGNMENT_LEFT, tooltip_size.x - 12, 12, Color.WHITE)
 
 func _rebuild_positions() -> void:
 	_item_positions.clear()

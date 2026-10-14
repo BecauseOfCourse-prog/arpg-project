@@ -15,12 +15,12 @@ Change specifications are durable records of requested behavior changes and thei
 
 | Specification | Status | Summary |
 | --- | --- | --- |
-| [ARPG-001: First Playable Vertical Slice](foundation/first-playable-vertical-slice.md) | Accepted | Defines the first end-to-end player loop; ready for implementation planning. |
+| [ARPG-001: First Playable Vertical Slice](foundation/first-playable-vertical-slice.md) | Complete | Delivers the hub-to-exploration combat and loot loop, with automated and editor verification. |
 | [ARPG-002: Godot Project Structure and Scene Conventions](foundation/project-structure.md) | Complete | Defines the repository-root project, continuous world scene, reusable actor/item scenes, and Godot Resources. |
 | [ARPG-003: Player Movement and Navigation](foundation/player-movement-navigation.md) | Complete | Implements mouse-led movement, obstacle navigation, actor collision, and the sole passage between connected zones for the first slice. |
 | [ARPG-004: Basic Combat](foundation/basic-combat.md) | Complete | Implements a ranged attack against one stationary, passive enemy for the first slice. |
 | [ARPG-005: Equipment Drop and Minimal Inventory](foundation/loot-and-inventory.md) | Complete | Implements one guaranteed equipment drop, contact pickup, and minimal inventory display. |
-| [ARPG-007: Hub Vendor](foundation/hub-vendor.md) | In Progress | Implements safe-hub trading, player gold, item sales, grid inventory capacity, and fixed or daily-refreshing vendor stock. |
+| [ARPG-007: Hub Vendor](foundation/hub-vendor.md) | In Progress | Implements safe-hub trading, player gold, item sales, grid capacity, and fixed stock; daily restock integration awaits the ARPG-012 game-day system. |
 | [ARPG-009: Save and Load](foundation/save-load.md) | Accepted | Defines manual and automatic saves, persistence boundaries, slot behavior, and recovery across application sessions. |
 
 ## Naming and placement

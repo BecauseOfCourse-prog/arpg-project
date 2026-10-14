@@ -1,6 +1,6 @@
 # ARPG-001: First Playable Vertical Slice
 
-- **Status:** Accepted
+- **Status:** Complete
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-002: Godot Project Structure and Scene Conventions](project-structure.md); [ARPG-003: Player Movement and Navigation](player-movement-navigation.md); [ARPG-004: Basic Combat](basic-combat.md); [ARPG-005: Equipment Drop and Minimal Inventory](loot-and-inventory.md)
@@ -81,24 +81,24 @@ The movement, combat, and loot behaviors are detailed in ARPG-003, ARPG-004, and
 
 Detailed input, combat, and drop rules are defined in ARPG-003 through ARPG-005.
 
-- [ ] The player can move from the hub into the connected exploration area and back without a separate hub mode or a visible interruption that breaks the seamless-world experience.
-- [ ] Hostile enemies do not enter the hub.
-- [ ] The player can use mouse input to move and perform a basic attack in the exploration area.
-- [ ] The enemy can be defeated, and defeat produces one equipment item with the specified example rarity and affix.
-- [ ] The player can collect the equipment drop and see it in the minimal inventory interface.
-- [ ] The player can return to the hub with the collected item still in inventory.
-- [ ] The slice uses 2D visuals composed for the agreed fixed oblique perspective.
-- [ ] The project launches from the Godot Editor directly into the hub.
-- [ ] Automated tests cover movement and obstacle navigation, attack targeting/approach/repetition/cancellation, enemy defeat and drop, and item pickup and inventory retention after returning to the hub.
+- [x] The player can move from the hub into the connected exploration area and back without a separate hub mode or a visible interruption that breaks the seamless-world experience.
+- [x] Hostile enemies do not enter the hub.
+- [x] The player can use mouse input to move and perform a basic attack in the exploration area.
+- [x] The enemy can be defeated, and defeat produces one equipment item with the specified example rarity and affix.
+- [x] The player can collect the equipment drop and see it in the minimal inventory interface.
+- [x] The player can return to the hub with the collected item still in inventory.
+- [x] The slice uses 2D visuals composed for the agreed fixed oblique perspective.
+- [x] The project launches from the Godot Editor directly into the hub.
+- [x] Automated tests cover movement and obstacle navigation, attack targeting/approach/repetition/cancellation, enemy defeat and drop, and item pickup and inventory retention after returning to the hub.
 
 ## Verification plan and results
 
-Run the GdUnit4 tests for deterministic gameplay behavior and run the game in Godot Editor to follow the full loop from hub to exploration area, through combat and item pickup, and back to the hub. Use the editor playthrough to assess fixed-oblique presentation and whether traversal feels continuous. Each implementation task records the checks relevant to its scope. Feature specifications define additional test coverage as those features are implemented.
+The full GdUnit4 suite passes (28 cases, 0 failures). The project owner verified the gameplay loop in Godot Editor, including movement, barriers, combat feedback, item drop and pickup, inventory, and return to the safe hub. The project launches from Godot Editor directly into the hub.
 
 ## Documentation impact
 
-- [ ] Update `docs/PROJECT_CONTEXT.md` if the accepted baseline changes.
-- [ ] Add or update an ADR if a lasting architectural decision is made.
+- [x] Update `docs/PROJECT_CONTEXT.md` if the accepted baseline changes.
+- [x] Add or update an ADR if a lasting architectural decision is made.
 - [x] Add this specification to `docs/specs/README.md` and link it from `docs/BACKLOG.md`.
 - [x] Select and document the automated test framework and base Windows test runner before gameplay implementation.
 - [x] Create focused follow-up specifications for movement/navigation, combat, and loot rules before implementation of those systems.
