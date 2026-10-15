@@ -1,6 +1,6 @@
 # ARPG-009: Save and Load
 
-- **Status:** Accepted
+- **Status:** In Progress
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md); [ARPG-005: Equipment Drop and Minimal Inventory](loot-and-inventory.md)
@@ -8,7 +8,7 @@
 
 ## Summary
 
-Define how a single-player session stores and restores player progress between application runs. Save/load is required for the full game but explicitly excluded from the first playable slice.
+Implement the first save/load slice for current player-owned state and establish the contracts for persistence systems still to come. Save/load remains a full-game requirement beyond the first playable slice.
 
 ## Motivation
 
@@ -44,7 +44,8 @@ The player can save manually to one of three manual slots from the pause menu, a
 - Provide save-slot selection from the main menu.
 - If no save is available, offer New Game and disable loading.
 - Mark a corrupted or version-incompatible save as unavailable and preserve access to all other slots.
-- Save format remains open.
+- Store saves as versioned JSON files under Godot's `user://saves/` directory; each slot has its own file.
+- The current prototype serializes the owned state that exists today: player gold and inventory item resource paths, stack quantities, and grid positions. Quest state remains an empty placeholder until a quest system exists; future progression systems must add their owned fields through this save contract.
 - The first playable slice does not save or load game state, as specified by ARPG-001.
 
 ## Affected systems
@@ -65,17 +66,17 @@ The player can save manually to one of three manual slots from the pause menu, a
 
 ## Acceptance criteria
 
-- [ ] The player can save and restore progress across application sessions using the agreed save trigger and resume flow.
-- [ ] Character level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, gold balance, inventory/items, and quest progress are restored consistently without duplicate or lost owned state; location, position, and world changes are not restored.
-- [ ] The player can use three manual slots and a separate autosave slot; autosave occurs on exit, quest completion, level-up, and important story milestones.
-- [ ] The player can manually save to a selected slot from the pause menu only, and select a save slot for loading from the main menu.
-- [ ] If no save is available, the main menu offers New Game and disables loading.
-- [ ] A corrupted or version-incompatible save is marked unavailable while other slots remain usable.
-- [ ] Automated tests verify serialization, restoration, compatibility handling, and failure recovery.
+- [ ] The player can save and restore all future progression and quest state across application sessions using the agreed save triggers; current gold and inventory round-trip successfully.
+- [ ] Character level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, gold balance, inventory/items, and quest progress are restored consistently without duplicate or lost owned state; location, position, and world changes are not restored. (Only gold and inventory exist today.)
+- [ ] The player can use three manual slots and a separate autosave slot; autosave occurs on exit and is exposed for quest completion, level-up, and important story milestones. (Quest and level-up event sources do not exist yet.)
+- [x] The player can manually save to a selected slot from the pause menu only, and select a save slot for loading from the main menu.
+- [x] If no save is available, the main menu offers New Game and disables loading.
+- [x] A corrupted or version-incompatible save is marked unavailable while other slots remain usable.
+- [x] Automated tests verify serialization, restoration, compatibility handling, and failure recovery.
 
 ## Verification plan and results
 
-After decisions are accepted, use automated tests for save/load round trips, system-owned state restoration, and the agreed error cases. Manually verify the save and resume flow in Godot Editor. No implementation or verification has been performed.
+GdUnit4 verifies save/load round trips for gold and inventory, three independent manual slots and a separate autosave slot, main-menu load selection, malformed/incompatible data handling, invalid snapshots, and recovery from missing or corrupt primary files when a valid backup exists. The full suite passes (35 cases, 0 failures), including a viewport-input regression test that confirms world clicks reach the player after leaving the menu. A visual Godot Editor playthrough of the new menu and pause flow remains to be performed.
 
 ## Documentation impact
 
@@ -83,10 +84,13 @@ After decisions are accepted, use automated tests for save/load round trips, sys
 - [x] Record the save compatibility policy in ADR-0003.
 - [x] Update related specifications and the index.
 - [x] Update the backlog when the specification is accepted.
+- [x] Record the initial JSON schema and storage location selected during implementation.
 
 ## Implementation notes
 
-Do not assume a save format, storage path, or system serialization API before implementation planning.
+Each save file contains a schema version, UTC save timestamp, and payload. Writes use a temporary file and a backup rename before replacing an existing slot. If startup finds a missing or corrupt primary file with a valid backup, it restores that backup; a valid save from an incompatible newer schema is preserved and never silently rolled back. Slot validation completes before any player state is restored. Item entries currently reference authored item Resources; randomized per-instance item data will need an explicit serialization contract when that system is introduced.
+
+The main-menu controls render on a viewport CanvasLayer so the world Camera2D cannot move them. After gameplay starts, the full-screen menu root ignores mouse input so it cannot block player movement or attack commands.
 
 ## Change record
 
@@ -101,3 +105,5 @@ Do not assume a save format, storage path, or system serialization API before im
 | 2026-10-14 | Project owner initially selected manual saving from both the pause menu and main menu; all product behavior questions were resolved and the specification was accepted. |
 | 2026-10-14 | Project owner corrected the manual save entry point: manual saving is available from the pause menu only; the main menu is for selecting and loading saves. |
 | 2026-10-14 | Gold balance ownership was assigned to Player Character & Progression and added to the persisted character state. |
+| 2026-10-14 | Implemented versioned JSON slot files, main-menu New Game/load selection, pause-menu manual saves, application-exit and milestone autosave entry points, and transactional restoration of current gold/inventory state. Full progression and quest persistence await those systems. |
+| 2026-10-15 | Added recovery from a valid backup when a slot's primary file is missing or corrupted, without replacing incompatible newer-version saves. |

@@ -1,6 +1,6 @@
 # ARPG-007: Hub Vendor
 
-- **Status:** In Progress
+- **Status:** Done
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md); [ARPG-003: Player Movement and Navigation](player-movement-navigation.md); [ARPG-005: Equipment Drop and Minimal Inventory](loot-and-inventory.md)
@@ -76,12 +76,12 @@ Clicking a vendor in the safe hub opens a vendor inventory window with two tabs:
 - [x] Stackable item copies merge into stacks of at most 12; potions stack and the bow remains non-stackable.
 - [x] Clicking a stack sells one item, while Shift+click sells the whole stack.
 - [x] Transactions update currency and inventory exactly once and preserve system ownership (automated transaction tests).
-- [ ] Insufficient funds, unavailable stock, or insufficient inventory capacity leave player and vendor state unchanged and provide visible feedback. State and rejection signals are tested; visual feedback awaits editor verification.
+- [x] Insufficient funds, unavailable stock, or insufficient inventory capacity leave player and vendor state unchanged and provide visible feedback (verified in Godot Editor by the project owner).
 - [x] Automated tests cover successful purchase and sale, transaction failure, and state consistency.
 
 ## Verification plan and results
 
-GdUnit4 test suite: 28 cases passed, 0 failures. Tests cover purchasing, selling, exact-price buyback including stack quantity, failed buyback with full inventory, rejection when the 10-by-10 buyback grid is full, item stack limits and non-stackable equipment, single-item versus whole-stack sale, tab flow, and attack cadence independent of clicks. A headless main-scene launch completed without errors. Manually verify both vendor tabs, buyback after closing/reopening the window, and rejection feedback in Godot Editor before marking this specification complete. Buyback entries last for the current world session. The active vendor uses fixed unlimited stock; daily restock remains a future integration with ARPG-012.
+GdUnit4 test suite: 28 cases passed, 0 failures. Tests cover purchasing, selling, exact-price buyback including stack quantity, failed buyback with full inventory, rejection when the 10-by-10 buyback grid is full, item stack limits and non-stackable equipment, single-item versus whole-stack sale, tab flow, and attack cadence independent of clicks. A headless main-scene launch completed without errors. The project owner verified both vendor tabs, buyback after closing/reopening the window, and visible rejection feedback in Godot Editor. Buyback entries last for the current world session. The active vendor uses fixed unlimited stock; daily restock remains a future integration with ARPG-012.
 
 ## Documentation impact
 
@@ -110,3 +110,4 @@ Keep concrete item catalogs, purchase prices, and class-specific starting gold i
 | 2026-10-14 | Project owner changed trading interaction: click player inventory items to sell while trading is open; show vendor stock in a 10-by-10 grid and buy by clicking vendor items. |
 | 2026-10-14 | Project owner requested `Buy` and `Buyback` tabs; sold items remain available at the exact price paid to the player. |
 | 2026-10-14 | Project owner set stack capacity to 12 items; clicks sell one unit and Shift+click sells the full stack. Health potions stack; the Emberwood Bow does not. |
+| 2026-10-15 | Project owner verified visible rejection feedback in Godot Editor; all ARPG-007 acceptance criteria are complete. |

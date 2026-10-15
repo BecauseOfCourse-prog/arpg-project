@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world_area.gd" id="1"]
 [ext_resource type="Resource" path="res://data/areas/hub.tres" id="2"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/hub/vendor_window.gd" id="12"]
 [ext_resource type="Script" path="res://scripts/world/world_session.gd" id="13"]
 [ext_resource type="Script" path="res://scripts/items/inventory_grid_view.gd" id="14"]
+[ext_resource type="Script" path="res://scripts/session/pause_menu.gd" id="15"]
 [sub_resource type="RectangleShape2D" id="RectangleShape_wall"]
 size = Vector2(24, 112)
 [sub_resource type="RectangleShape2D" id="RectangleShape_north_boundary"]
@@ -81,6 +82,9 @@ script = ExtResource("10")
 
 [node name="VendorWindow" type="CanvasLayer" parent="."]
 script = ExtResource("12")
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+script = ExtResource("15")
 
 [node name="Panel" type="PanelContainer" parent="Inventory"]
 offset_left = 16.0

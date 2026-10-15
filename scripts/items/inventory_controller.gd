@@ -56,6 +56,57 @@ func remove_item_at(index: int, amount: int = -1) -> ItemDefinition:
 	_refresh_display()
 	return definition
 
+func restore_items(item_paths: Array, positions: Array, counts: Array) -> bool:
+	if item_paths.size() != positions.size() or item_paths.size() != counts.size():
+		return false
+	var restored_items: Array[ItemDefinition] = []
+	var restored_positions: Array[Vector2i] = []
+	var restored_counts: Array[int] = []
+	var occupied: Array[Array] = []
+	for y in range(GRID_HEIGHT):
+		var row: Array[bool] = []
+		row.resize(GRID_WIDTH)
+		row.fill(false)
+		occupied.append(row)
+	for index in range(item_paths.size()):
+		var path := str(item_paths[index])
+		if not path.begins_with("res://data/items/") or not path.ends_with(".tres"):
+			return false
+		if not ResourceLoader.exists(path):
+			return false
+		var item := ResourceLoader.load(path) as ItemDefinition
+		if item == null:
+			return false
+		if not positions[index] is Array or positions[index].size() != 2 or not _is_whole_number(positions[index][0]) or not _is_whole_number(positions[index][1]) or not _is_whole_number(counts[index]):
+			return false
+		var origin := Vector2i(int(positions[index][0]), int(positions[index][1]))
+		var quantity := int(counts[index])
+		var width := clampi(item.inventory_width, 1, GRID_WIDTH)
+		var height := clampi(item.inventory_height, 1, GRID_HEIGHT)
+		var limit := item.stack_limit() if item.stackable else 1
+		if origin.x < 0 or origin.y < 0 or origin.x + width > GRID_WIDTH or origin.y + height > GRID_HEIGHT:
+			return false
+		if quantity <= 0 or quantity > limit:
+			return false
+		for y in range(origin.y, origin.y + height):
+			for x in range(origin.x, origin.x + width):
+				if occupied[y][x]:
+					return false
+				occupied[y][x] = true
+		restored_items.append(item)
+		restored_positions.append(origin)
+		restored_counts.append(quantity)
+	collected_items = restored_items
+	item_positions = restored_positions
+	item_counts = restored_counts
+	_refresh_display()
+	return true
+
+func _is_whole_number(value: Variant) -> bool:
+	if value is int:
+		return true
+	return value is float and is_equal_approx(float(value), roundf(float(value)))
+
 func _plan_addition(definition: ItemDefinition, amount: int) -> Dictionary:
 	if definition == null or amount <= 0:
 		return {"fits": false}

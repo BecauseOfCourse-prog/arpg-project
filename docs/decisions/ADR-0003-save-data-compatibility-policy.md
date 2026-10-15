@@ -34,4 +34,4 @@ Treat a corrupted or version-incompatible save as unavailable. Preserve all othe
 
 ## Follow-up work
 
-- [ ] Implement compatibility detection and unavailable-slot behavior under ARPG-009.
+- [x] Implement schema-version and data validation with affected-slot unavailable behavior under ARPG-009.

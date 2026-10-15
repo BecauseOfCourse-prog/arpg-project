@@ -1,6 +1,6 @@
 extends GdUnitTestSuite
 
-func test_main_scene_starts_in_hub_inside_one_continuous_world() -> void:
+func test_main_menu_starts_before_world_and_new_game_enters_continuous_world() -> void:
 	var packed_main: PackedScene = load("res://scenes/main/main.tscn") as PackedScene
 	assert_object(packed_main).is_not_null()
 	if packed_main == null:
@@ -8,6 +8,17 @@ func test_main_scene_starts_in_hub_inside_one_continuous_world() -> void:
 
 	var main: Node = packed_main.instantiate()
 	add_child(main)
+	var world_before_start := main.get_node("World") as Node2D
+	assert_bool(world_before_start.visible).is_false()
+	var menu_layer := main.get("_menu_layer") as CanvasLayer
+	assert_object(menu_layer).is_not_null()
+	if menu_layer != null:
+		assert_int(menu_layer.layer).is_greater(1)
+	assert_bool((world_before_start.get_node("Inventory") as CanvasLayer).visible).is_false()
+	main.call("_start_new_game")
+	assert_bool(world_before_start.visible).is_true()
+	assert_int((main as Control).mouse_filter).is_equal(Control.MOUSE_FILTER_IGNORE)
+	assert_bool((world_before_start.get_node("Inventory") as CanvasLayer).visible).is_true()
 
 	var hub: WorldArea = main.get_node_or_null("World/Hub") as WorldArea
 	var exploration: WorldArea = main.get_node_or_null("World/Exploration") as WorldArea
@@ -49,6 +60,21 @@ func test_reusable_player_enemy_and_item_scenes_load() -> void:
 	assert_object(item_scene).is_not_null()
 	assert_object(projectile_scene).is_not_null()
 
+func test_world_mouse_click_reaches_player_after_starting_game() -> void:
+	var main := (load("res://scenes/main/main.tscn") as PackedScene).instantiate()
+	add_child(main)
+	main.call("_start_new_game")
+	var player := main.get_node("World/Hub/Player") as PlayerActor
+	var destination := player.global_position + Vector2(80, 40)
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	click.position = player.get_global_transform_with_canvas() * player.to_local(destination)
+	get_viewport().push_input(click, true)
+	await get_tree().physics_frame
+	assert_bool(player.is_moving()).is_true()
+	main.queue_free()
+
 func test_authored_gameplay_definitions_use_resources() -> void:
 	var player: PlayerDefinition = load("res://data/characters/adventurer.tres") as PlayerDefinition
 	var enemy: EnemyDefinition = load("res://data/enemies/first_enemy.tres") as EnemyDefinition
@@ -81,6 +107,7 @@ func test_navigation_routes_around_wall_and_replaces_destination() -> void:
 		return
 	var main := main_scene.instantiate()
 	add_child(main)
+	main.call("_start_new_game")
 	await get_tree().physics_frame
 	var navigation := main.get_node_or_null("World/NavigationGrid") as NavigationGrid
 	var player := main.get_node_or_null("World/Hub/Player") as PlayerActor
@@ -120,6 +147,7 @@ func test_enemy_click_requests_attack_and_outside_ground_resolves_boundary() -> 
 		return
 	var main := main_scene.instantiate()
 	add_child(main)
+	main.call("_start_new_game")
 	await get_tree().physics_frame
 	var navigation := main.get_node_or_null("World/NavigationGrid") as NavigationGrid
 	var player := main.get_node_or_null("World/Hub/Player") as PlayerActor
@@ -150,6 +178,7 @@ func test_zones_connect_only_through_transition_passage() -> void:
 		return
 	var main := main_scene.instantiate()
 	add_child(main)
+	main.call("_start_new_game")
 	await get_tree().physics_frame
 	var navigation := main.get_node_or_null("World/NavigationGrid") as NavigationGrid
 	var player := main.get_node_or_null("World/Hub/Player") as PlayerActor

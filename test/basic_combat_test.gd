@@ -205,4 +205,5 @@ func _create_main() -> Node:
 		return null
 	var main := main_scene.instantiate()
 	add_child(main)
+	main.call("_start_new_game")
 	return main

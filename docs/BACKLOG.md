@@ -29,9 +29,9 @@ This is the canonical, prioritized inventory of proposed and planned work. Entri
 | ARPG-004 | Implement a basic player attack and one enemy with health, damage, and defeat behavior. | P0 | Done | ARPG-001, ARPG-002, ARPG-003 | [Completed specification](specs/foundation/basic-combat.md) |
 | ARPG-005 | Add a guaranteed equipment drop, pickup, and minimal inventory display. | P1 | Done | ARPG-001, ARPG-002, ARPG-004 | [Completed specification](specs/foundation/loot-and-inventory.md) |
 | ARPG-006 | Add an explorable area seamlessly connected to a safe hub area in the same traversable world. | P1 | Done | ARPG-001, ARPG-002, ARPG-003 | [Completed specification](specs/foundation/player-movement-navigation.md) |
-| ARPG-007 | Add a hub vendor flow for selling loot and buying a potion or item. | P1 | In Progress | ARPG-005, ARPG-006; currency and vendor rules | [In-progress specification](specs/foundation/hub-vendor.md) |
+| ARPG-007 | Add a hub vendor flow for selling loot and buying a potion or item. | P1 | Done | ARPG-005, ARPG-006; currency and vendor rules | [Completed specification](specs/foundation/hub-vendor.md) |
 | ARPG-008 | Add a keyboard-triggered ability and potion use. | P1 | Proposed | ARPG-003, ARPG-004; input and resource rules | — |
-| ARPG-009 | Define save/load behavior and persistence boundaries. | P1 | Specified | ARPG-001; progression and persistence rules | [Accepted specification](specs/foundation/save-load.md) |
+| ARPG-009 | Define save/load behavior and persistence boundaries. | P1 | In Progress | ARPG-001; progression and persistence rules | [In-progress specification](specs/foundation/save-load.md) |
 | ARPG-011 | Add attackable breakable map objects that can drop gold. | P1 | Proposed | ARPG-004, ARPG-007; breakable-object and reward rules | — |
 | ARPG-012 | Add a game-time and day-cycle system for future lighting/activity schedules and daily vendor restocks. | P1 | Proposed | ARPG-007; time progression and pause/save rules | — |
 | ARPG-010 | Expand into multiple classes, enemy families, biome chains, affixes, and companion hiring. | P2 | Proposed | First playable slice; each subsystem requires its own specifications | — |

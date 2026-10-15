@@ -7,6 +7,7 @@ func test_world_wires_vendor_window_and_class_starting_gold() -> void:
 		return
 	var main := scene.instantiate()
 	add_child(main)
+	main.call("_start_new_game")
 	await get_tree().process_frame
 	var progression := main.get_node("World/PlayerProgression") as PlayerProgression
 	var inventory := main.get_node("World/Inventory") as InventoryController
