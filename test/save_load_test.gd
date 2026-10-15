@@ -40,10 +40,13 @@ func test_manual_and_autosave_slots_are_separate_and_round_trip_owned_state() ->
 	assert_str(_manager.call("get_slot_info", "autosave").get("status")).is_equal("available")
 	progression.gold = 1
 	inventory.remove_item_at(0)
+	var player := world.get_node("Hub/Player") as PlayerActor
+	player.current_health = 10
 	main.call("_load_slot", "manual_1")
 	assert_int(progression.gold).is_equal(381)
 	assert_int(inventory.collected_items.size()).is_equal(1)
 	assert_int(inventory.item_counts[0]).is_equal(7)
+	assert_int(player.current_health).is_equal(100)
 	main.queue_free()
 
 func test_corrupted_and_incompatible_slots_are_unavailable_without_affecting_valid_slots() -> void:

@@ -38,6 +38,7 @@ The player can save manually to one of three manual slots from the pause menu, a
 - Save data must be durable across application shutdown and restart.
 - Character progression must persist across sessions, including level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, and the numeric gold balance owned by Player Character & Progression. Inventory/items and quest progress must also persist.
 - Do not persist the current location, character position, or world changes; loading restores character and progression data only.
+- Current actor health is owned by Actors & Combat and is reset to full when loading; current HP is not included in the prototype save payload.
 - Provide three manual save slots and one separate autosave slot.
 - Allow manual saving to a selected slot from the pause menu only.
 - Autosave on application exit, quest completion, level-up, and important story milestones.
@@ -107,3 +108,4 @@ The main-menu controls render on a viewport CanvasLayer so the world Camera2D ca
 | 2026-10-14 | Gold balance ownership was assigned to Player Character & Progression and added to the persisted character state. |
 | 2026-10-14 | Implemented versioned JSON slot files, main-menu New Game/load selection, pause-menu manual saves, application-exit and milestone autosave entry points, and transactional restoration of current gold/inventory state. Full progression and quest persistence await those systems. |
 | 2026-10-15 | Added recovery from a valid backup when a slot's primary file is missing or corrupted, without replacing incompatible newer-version saves. |
+| 2026-10-15 | ARPG-008 adds player health; saves continue to omit current HP and restore the player to full health on load, as selected by the project owner. |

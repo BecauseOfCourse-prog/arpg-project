@@ -13,3 +13,4 @@ inventory_width = 1
 inventory_height = 1
 stackable = true
 max_stack_size = 12
+health_restore = 50

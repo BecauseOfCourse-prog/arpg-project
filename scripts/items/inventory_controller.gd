@@ -56,6 +56,12 @@ func remove_item_at(index: int, amount: int = -1) -> ItemDefinition:
 	_refresh_display()
 	return definition
 
+func find_item_index_by_id(item_id: String) -> int:
+	for index in range(collected_items.size()):
+		if collected_items[index] != null and collected_items[index].definition_id == item_id:
+			return index
+	return -1
+
 func restore_items(item_paths: Array, positions: Array, counts: Array) -> bool:
 	if item_paths.size() != positions.size() or item_paths.size() != counts.size():
 		return false

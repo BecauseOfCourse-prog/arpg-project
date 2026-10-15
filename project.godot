@@ -26,6 +26,17 @@ window/size/viewport_height=720
 window/size/window_width_override=1280
 window/size/window_height_override=720
 
+[input]
+
+cast_cursor_ability={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":81,"unicode":113)]
+}
+use_health_potion={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":49,"unicode":49)]
+}
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")

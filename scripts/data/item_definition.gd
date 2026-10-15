@@ -13,6 +13,7 @@ enum ItemCategory { EQUIPMENT, CONSUMABLE }
 @export_range(1, 4, 1) var inventory_height: int = 1
 @export var stackable: bool = false
 @export_range(1, 12, 1) var max_stack_size: int = 12
+@export_range(0, 1000000, 1) var health_restore: int = 0
 
 func stack_limit() -> int:
 	return clampi(max_stack_size, 1, 12)

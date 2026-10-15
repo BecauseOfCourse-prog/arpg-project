@@ -3,6 +3,7 @@ class_name PlayerActor
 
 signal attack_requested(target: EnemyActor)
 signal movement_command_issued
+signal health_changed(current_health: int, maximum_health: int)
 
 @export var definition: PlayerDefinition
 @export var move_speed: float = 180.0
@@ -12,10 +13,14 @@ var _path_index := 0
 var _left_button_held := false
 var _last_hold_goal := Vector2(INF, INF)
 var _navigation: NavigationGrid
+var max_health: int = 100
+var current_health: int = 100
 
 func _ready() -> void:
 	add_to_group("player_actor")
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
+	max_health = maxi(1, definition.max_health) if definition != null else 100
+	current_health = clampi(definition.starting_health, 0, max_health) if definition != null else max_health
 	var world := get_parent().get_parent()
 	_navigation = world.get_node_or_null("NavigationGrid") as NavigationGrid
 	if _navigation == null:
@@ -23,6 +28,31 @@ func _ready() -> void:
 			if is_instance_valid(candidate):
 				_navigation = candidate as NavigationGrid
 				break
+	health_changed.emit(current_health, max_health)
+
+func heal(amount: int) -> int:
+	if amount <= 0:
+		return 0
+	var previous_health := current_health
+	current_health = mini(max_health, current_health + amount)
+	if current_health != previous_health:
+		health_changed.emit(current_health, max_health)
+	return current_health - previous_health
+
+func take_damage(amount: int) -> int:
+	if amount <= 0:
+		return 0
+	var previous_health := current_health
+	current_health = maxi(0, current_health - amount)
+	if current_health != previous_health:
+		health_changed.emit(current_health, max_health)
+	return previous_health - current_health
+
+func restore_full_health() -> void:
+	if current_health == max_health:
+		return
+	current_health = max_health
+	health_changed.emit(current_health, max_health)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:

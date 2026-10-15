@@ -29,6 +29,10 @@ func _ready() -> void:
 		root_window.close_requested.connect(_on_window_close_requested)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("use_health_potion", false):
+		use_health_potion()
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
 		var pause_menu := get_node_or_null("PauseMenu") as PauseMenu
 		if pause_menu != null:
@@ -55,6 +59,24 @@ func save_quest_completion() -> bool:
 
 func save_level_up() -> bool:
 	return _save_autoslot()
+
+func use_health_potion() -> bool:
+	if not _session_active or _inventory == null:
+		return false
+	var player := get_node_or_null("Hub/Player") as PlayerActor
+	if player == null or player.current_health >= player.max_health:
+		return false
+	var item_index := _inventory.find_item_index_by_id("health_potion")
+	if item_index < 0:
+		return false
+	var potion := _inventory.collected_items[item_index]
+	if potion.health_restore <= 0:
+		return false
+	var consumed := _inventory.remove_item_at(item_index, 1)
+	if consumed == null:
+		return false
+	player.heal(consumed.health_restore)
+	return true
 
 func return_to_main_menu() -> void:
 	get_tree().paused = false
@@ -96,4 +118,7 @@ func _restore_pending_game() -> void:
 	if not _inventory.restore_items(payload.get("items", []), payload.get("positions", []), payload.get("counts", [])):
 		return
 	_progression.gold = maxi(0, int(payload.get("gold", 0)))
+	var player := get_node_or_null("Hub/Player") as PlayerActor
+	if player != null:
+		player.restore_full_health()
 	manager.call("clear_pending_game_data")
