@@ -38,7 +38,7 @@ Clicking a vendor in the safe hub opens a vendor inventory window with two tabs:
 
 - Hub Services own vendor rules and request item/currency operations from the systems that own those states, consistent with ADR-0002.
 - Gold is a numeric balance owned by Player Character & Progression. A new character's starting balance depends on class; class-specific values will be defined with class data.
-- Player gold can come from selling items, quest rewards, enemy drops, and small breakable objects on the map. The breakable-object behavior itself is outside this vendor specification and requires its own feature scope before implementation.
+- Player gold can come from selling items, quest rewards, enemy drops, and map caches. Cache interaction and rewards are specified separately in [ARPG-011](cache-interaction-and-gold-pickup.md); the selected prototype interaction opens a cache after approach rather than attacking it.
 - Support fixed-stock vendors with unlimited quantities and vendors whose limited assortment refreshes once per in-game day.
 - Sellable categories include equipment and consumables such as identification scrolls, teleport scrolls, and upgrade orbs. Each item or vendor offer has an authored purchase price; selling it returns 50% of that price.
 - Only unequipped items present in the player's inventory can be sold; equipped items must be unequipped first.
@@ -111,3 +111,4 @@ Keep concrete item catalogs, purchase prices, and class-specific starting gold i
 | 2026-10-14 | Project owner requested `Buy` and `Buyback` tabs; sold items remain available at the exact price paid to the player. |
 | 2026-10-14 | Project owner set stack capacity to 12 items; clicks sell one unit and Shift+click sells the full stack. Health potions stack; the Emberwood Bow does not. |
 | 2026-10-15 | Project owner verified visible rejection feedback in Godot Editor; all ARPG-007 acceptance criteria are complete. |
+| 2026-10-15 | ARPG-011 clarifies map cache gold rewards as approach-to-open interactions rather than attacks on breakable objects. |
