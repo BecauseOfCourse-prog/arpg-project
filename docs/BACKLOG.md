@@ -35,7 +35,7 @@ This is the canonical, prioritized inventory of proposed and planned work. Entri
 | ARPG-011 | Add interactable map caches that award a randomized gold pickup. | P1 | Done | ARPG-003, ARPG-007 | [Completed specification](specs/foundation/cache-interaction-and-gold-pickup.md) |
 | ARPG-014 | Correct world draw order, show inventory gold, and approach vendors before trading. | P1 | Done | ARPG-003, ARPG-007, ARPG-011 | [Completed specification](specs/foundation/world-interaction-and-inventory-feedback.md) |
 | ARPG-013 | Generate two variable-size exploration zones with randomized object placement and connected traversal. | P1 | Done | ARPG-003, ARPG-006, ARPG-011 | [Completed specification](specs/foundation/procedural-exploration-zones.md) |
-| ARPG-015 | Separate explicit attack/interaction clicks from movement-only mouse holds. | P1 | In Progress | ARPG-003, ARPG-004, ARPG-011, ARPG-013, ARPG-014 | [In-progress specification](specs/foundation/click-and-hold-input.md) |
+| ARPG-015 | Separate explicit attack/interaction clicks from movement-only mouse holds. | P1 | Done | ARPG-003, ARPG-004, ARPG-011, ARPG-013, ARPG-014 | [Completed specification](specs/foundation/click-and-hold-input.md) |
 | ARPG-012 | Add a game-time and day-cycle system for future lighting/activity schedules and daily vendor restocks. | P1 | Proposed | ARPG-007; time progression and pause/save rules | — |
 | ARPG-010 | Expand into multiple classes, enemy families, biome chains, affixes, and companion hiring. | P2 | Proposed | First playable slice; each subsystem requires its own specifications | — |
 

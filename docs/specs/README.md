@@ -26,7 +26,7 @@ Change specifications are durable records of requested behavior changes and thei
 | [ARPG-011: Cache Interaction and Gold Pickup](foundation/cache-interaction-and-gold-pickup.md) | Complete | Implements verified approach-to-open map caches and clickable gold rewards with load reset; draw-order follow-up is tracked in ARPG-014. |
 | [ARPG-014: World Interaction and Inventory Feedback](foundation/world-interaction-and-inventory-feedback.md) | Complete | Corrects world draw order, displays inventory gold, and requires approaching vendors before opening trading. |
 | [ARPG-013: Procedural Exploration Zone Generation](foundation/procedural-exploration-zones.md) | Complete | Generates two variable-size rectangular exploration zones with randomized content and a randomized inter-zone passage; layouts reset on load. |
-| [ARPG-015: Click and Hold Input](foundation/click-and-hold-input.md) | In Progress | Uses explicit clicks for attacks/interactions and mouse holds only for movement, preserving targets with a following camera. |
+| [ARPG-015: Click and Hold Input](foundation/click-and-hold-input.md) | Complete | Uses explicit clicks for attacks/interactions and mouse holds only for movement, preserving targets with a following camera. |
 
 ## Naming and placement
 
