@@ -13,6 +13,7 @@ ADRs capture decisions with lasting technical or architectural consequences. The
 
 | ADR | Status | Decision |
 | --- | --- | --- |
+| [ADR-0005: Finite Vendor Stock Persistence](ADR-0005-finite-vendor-stock-persistence.md) | Accepted | Persist finite regular vendor stock and daily refresh state as an explicit world-state persistence exception. |
 | [ADR-0001: Initial technology stack](ADR-0001-initial-technology-stack.md) | Accepted | Godot 4.6 Stable, typed GDScript, 2D sprites drawn for a fixed oblique perspective, Windows PC, single-player, and Git. |
 | [ADR-0002: Game system boundaries](ADR-0002-game-system-boundaries.md) | Accepted | Defines the high-level gameplay systems and treats the safe hub as part of the continuous traversable world. |
 | [ADR-0003: Save Data Compatibility Policy](ADR-0003-save-data-compatibility-policy.md) | Accepted | Unusable or incompatible saves are marked unavailable without affecting other save slots. |

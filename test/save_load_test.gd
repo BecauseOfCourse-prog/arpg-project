@@ -124,6 +124,28 @@ func _valid_payload() -> Dictionary:
 		"quests": {},
 	}
 
+func test_game_time_round_trip_validation_and_legacy_default() -> void:
+	var payload := _valid_payload()
+	payload["game_time"] = {"day": 4, "minute": 359.25, "pending_vendor_day": -1}
+	assert_bool(_manager.call("save_manual", "manual_1", payload)).is_true()
+	assert_bool(_manager.call("load_slot", "manual_1")).is_true()
+	var main := (load("res://scenes/main/main.tscn") as PackedScene).instantiate()
+	add_child(main)
+	var clock: GameClock = main.get_node("World").game_clock
+	assert_int(clock.day).is_equal(4)
+	assert_float(clock.minute).is_equal(359.25)
+	main.free()
+	payload["game_time"]["minute"] = -1
+	assert_bool(_manager.call("save_manual", "manual_2", payload)).is_false()
+	assert_bool(_manager.call("save_manual", "manual_3", _valid_payload())).is_true()
+	assert_bool(_manager.call("load_slot", "manual_3")).is_true()
+	main = (load("res://scenes/main/main.tscn") as PackedScene).instantiate()
+	add_child(main)
+	clock = main.get_node("World").game_clock
+	assert_int(clock.day).is_equal(1)
+	assert_float(clock.minute).is_equal(480.0)
+	main.free()
+
 func _write_text(path: String, value: String) -> void:
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
 	var file := FileAccess.open(path, FileAccess.WRITE)

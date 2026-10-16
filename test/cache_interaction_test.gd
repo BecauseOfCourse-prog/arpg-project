@@ -165,6 +165,11 @@ func test_loading_preserves_saved_gold_resets_cache_and_discards_uncollected_pil
 
 func test_player_is_drawn_in_front_of_cache_when_below_and_behind_when_above() -> void:
 	# Check rendered overlap, including sorting across the two area parents.
+	# Isolate draw ordering from the independently tested time-of-day tint.
+	var clock: GameClock = _world.game_clock
+	clock.active = false
+	clock.minute = 600.0
+	clock.time_changed.emit()
 	var viewport := SubViewport.new()
 	viewport.size = Vector2i(1280, 720)
 	viewport.world_2d = get_viewport().world_2d

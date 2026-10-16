@@ -1,0 +1,8 @@
+Generated with the built-in image_gen tool.
+Single static idle sprite, transparent background.
+
+Use case: stylized-concept
+Asset type: single enemy idle sprite for a dark fantasy 2D action RPG in a fixed oblique projection.
+Primary request: one floating fleshy spherical monster with exactly one large eye and a broad mouth full of irregular sharp teeth. No limbs or wings; it levitates. Detailed painterly pre-rendered game-art appearance, sinister organic red flesh, subtle veins, moist highlights, ivory teeth, expressive single eye. Fictional creature, no dismemberment or dripping blood.
+Composition: one complete isolated creature centered, full silhouette visible, facing toward viewer and slightly left in a three-quarter view, camera elevated approximately 30 degrees to match an oblique game world. Round compact silhouette and large readable eye/mouth that remain clear at 64 pixels. Creature occupies 80 percent of square canvas. Consistent top-left lighting, restrained dark fantasy palette, crisp edges.
+Background: genuinely transparent alpha, no ground, no cast shadow, no scenery, no text, no border, no additional creatures. This is a single usable sprite, not a concept sheet or sprite sheet.

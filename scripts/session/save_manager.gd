@@ -121,6 +121,9 @@ func _slot_path(slot_id: String) -> String:
 	return "%s/%s.json" % [storage_directory, slot_id]
 
 func _is_valid_payload(payload: Dictionary) -> bool:
+	# Additive schema-1 field: older saves load at Day 1, 08:00.
+	if payload.has("game_time") and not GameClock.valid_snapshot(payload["game_time"]):
+		return false
 	if not payload.has("gold") or not _is_whole_number(payload["gold"]) or int(payload["gold"]) < 0:
 		return false
 	if not payload.get("items", null) is Array:

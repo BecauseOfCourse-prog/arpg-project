@@ -11,8 +11,37 @@ var generation_revision := 0
 var _inventory: InventoryController
 var _progression: PlayerProgression
 var _session_active := false
+var game_clock: GameClock
+var _daylight: CanvasModulate
+var _time_hud: CanvasLayer
+var _time_label: Label
+
+func _setup_game_time() -> void:
+	game_clock = GameClock.new()
+	game_clock.name = "GameClock"
+	add_child(game_clock)
+	_daylight = CanvasModulate.new()
+	add_child(_daylight)
+	_time_hud = CanvasLayer.new()
+	_time_hud.layer = 3
+	_time_hud.visible = false
+	add_child(_time_hud)
+	_time_label = Label.new()
+	_time_label.position = Vector2(380, 16)
+	_time_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_time_hud.add_child(_time_label)
+	game_clock.time_changed.connect(_update_game_time_view)
+	var window := get_node("VendorWindow") as VendorWindow
+	window.visibility_changed.connect(func() -> void: game_clock.set_trading_open(window.visible))
+	_update_game_time_view()
+
+func _update_game_time_view() -> void:
+	_daylight.color = game_clock.lighting()
+	var periods := {"Morning": "Утро", "Day": "День", "Evening": "Вечер", "Night": "Ночь"}
+	_time_label.text = "День %d · %02d:%02d · %s" % [game_clock.day, int(game_clock.minute) / 60, int(game_clock.minute) % 60, periods[game_clock.period()]]
 
 func _ready() -> void:
+	_setup_game_time()
 	var player := get_node_or_null("Hub/Player") as PlayerActor
 	_inventory = get_node_or_null("Inventory") as InventoryController
 	_progression = get_node_or_null("PlayerProgression") as PlayerProgression
@@ -43,6 +72,7 @@ func _physics_process(_delta: float) -> void:
 		_update_camera()
 
 func start_new_game() -> void:
+	game_clock.reset()
 	if procedural_generation_enabled:
 		regenerate_exploration()
 
@@ -97,6 +127,9 @@ func _on_window_close_requested() -> void:
 
 func activate_session() -> void:
 	_session_active = true
+	game_clock.active = true
+	_time_hud.visible = true
+	game_clock.set_trading_open((get_node("VendorWindow") as VendorWindow).visible)
 
 func save_manual(slot_id: String) -> bool:
 	var manager := get_node_or_null("/root/SaveManager")
@@ -154,6 +187,7 @@ func _build_save_payload() -> Dictionary:
 		"positions": positions,
 		"counts": counts,
 		"quests": {},
+		"game_time": game_clock.snapshot(),
 	}
 
 func _restore_pending_game() -> void:
@@ -164,11 +198,17 @@ func _restore_pending_game() -> void:
 	if pending_data.is_empty():
 		return
 	var payload := pending_data
+	if payload.has("game_time") and not GameClock.valid_snapshot(payload["game_time"]):
+		return
 	if _progression == null or _inventory == null:
 		return
 	if not _inventory.restore_items(payload.get("items", []), payload.get("positions", []), payload.get("counts", [])):
 		return
 	_progression.gold = maxi(0, int(payload.get("gold", 0)))
+	if payload.has("game_time"):
+		game_clock.restore(payload["game_time"])
+	else:
+		game_clock.reset()
 	if procedural_generation_enabled:
 		regenerate_exploration()
 	else:

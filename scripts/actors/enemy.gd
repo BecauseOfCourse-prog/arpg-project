@@ -7,7 +7,7 @@ signal defeated(enemy: EnemyActor)
 @export var definition: EnemyDefinition
 @export var click_radius: float = 18.0
 
-@onready var _sprite: Polygon2D = get_node_or_null("PlaceholderSprite") as Polygon2D
+@onready var _sprite: Sprite2D = get_node_or_null("Sprite2D") as Sprite2D
 @onready var _collision_shape: CollisionShape2D = get_node_or_null("CollisionShape2D") as CollisionShape2D
 
 var current_health: int = 0

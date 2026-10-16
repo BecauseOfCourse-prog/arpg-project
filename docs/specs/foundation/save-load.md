@@ -37,7 +37,7 @@ The player can save manually to one of three manual slots from the pause menu, a
 - Save data must respect system ownership in ADR-0002; the Save & Load system coordinates serialization and restoration through explicit contracts.
 - Save data must be durable across application shutdown and restart.
 - Character progression must persist across sessions, including level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, and the numeric gold balance owned by Player Character & Progression. Inventory/items and quest progress must also persist.
-- Do not persist the current location, character position, or world changes; loading restores character and progression data only.
+- Do not persist the current location, character position, or general world changes. ARPG-012 adds persisted game time; ARPG-016 and ADR-0005 establish a narrow exception for finite regular vendor stock and its daily refresh state. Game time is implemented; finite vendor stock persistence awaits ARPG-016 implementation.
 - Current actor health is owned by Actors & Combat and is reset to full when loading; current HP is not included in the prototype save payload.
 - Provide three manual save slots and one separate autosave slot.
 - Allow manual saving to a selected slot from the pause menu only.
@@ -46,7 +46,7 @@ The player can save manually to one of three manual slots from the pause menu, a
 - If no save is available, offer New Game and disable loading.
 - Mark a corrupted or version-incompatible save as unavailable and preserve access to all other slots.
 - Store saves as versioned JSON files under Godot's `user://saves/` directory; each slot has its own file.
-- The current prototype serializes the owned state that exists today: player gold and inventory item resource paths, stack quantities, and grid positions. Quest state remains an empty placeholder until a quest system exists; future progression systems must add their owned fields through this save contract.
+- The current prototype serializes the owned state that exists today: game time, player gold, and inventory item resource paths, stack quantities, and grid positions. Quest state remains an empty placeholder until a quest system exists; future progression systems must add their owned fields through this save contract.
 - The first playable slice does not save or load game state, as specified by ARPG-001.
 
 ## Affected systems
@@ -68,7 +68,7 @@ The player can save manually to one of three manual slots from the pause menu, a
 ## Acceptance criteria
 
 - [ ] The player can save and restore all future progression and quest state across application sessions using the agreed save triggers; current gold and inventory round-trip successfully.
-- [ ] Character level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, gold balance, inventory/items, and quest progress are restored consistently without duplicate or lost owned state; location, position, and world changes are not restored. (Only gold and inventory exist today.)
+- [ ] Character level, experience, attributes and allocated points, unlocked and upgraded skills, selected abilities, equipped items, gold balance, inventory/items, and quest progress are restored consistently without duplicate or lost owned state; location, position, and world changes are not restored. (Gold, inventory, and game time exist today; finite vendor-stock persistence is specified separately in ARPG-016.)
 - [ ] The player can use three manual slots and a separate autosave slot; autosave occurs on exit and is exposed for quest completion, level-up, and important story milestones. (Quest and level-up event sources do not exist yet.)
 - [x] The player can manually save to a selected slot from the pause menu only, and select a save slot for loading from the main menu.
 - [x] If no save is available, the main menu offers New Game and disables loading.
@@ -88,6 +88,8 @@ GdUnit4 verifies save/load round trips for gold and inventory, three independent
 - [x] Record the initial JSON schema and storage location selected during implementation.
 
 ## Implementation notes
+
+ARPG-012 adds optional schema-1 `game_time` containing day, fractional minute, and pending vendor refresh day. Legacy saves lacking this field start at Day 1, 08:00. Present but invalid time data rejects the slot before player state restoration. Time restoration does not simulate offline progression. ARPG-016 finite-stock persistence is accepted but not implemented yet.
 
 Each save file contains a schema version, UTC save timestamp, and payload. Writes use a temporary file and a backup rename before replacing an existing slot. If startup finds a missing or corrupt primary file with a valid backup, it restores that backup; a valid save from an incompatible newer schema is preserved and never silently rolled back. Slot validation completes before any player state is restored. Item entries currently reference authored item Resources; randomized per-instance item data will need an explicit serialization contract when that system is introduced.
 
