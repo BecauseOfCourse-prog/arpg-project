@@ -64,6 +64,23 @@ interaction_range = 40.0
 polygon = PackedVector2Array(-14, -25, 14, -25, 17, 13, 0, 20, -17, 13)
 color = Color(0.82, 0.58, 0.22, 1)
 
+[node name="LimitedVendor" type="Node2D" parent="Hub" groups=["hub_vendors"]]
+position = Vector2(-180, -75)
+script = ExtResource("11")
+click_radius = 24.0
+interaction_range = 40.0
+
+[node name="Visual" type="Polygon2D" parent="Hub/LimitedVendor"]
+polygon = PackedVector2Array(0, -34, 16, -14, 20, 14, 0, 20, -20, 14, -16, -14)
+color = Color(0.52, 0.36, 0.88, 1)
+
+[node name="Title" type="Label" parent="Hub/LimitedVendor"]
+offset_left = -38.0
+offset_top = -58.0
+offset_right = 60.0
+text = "Алхимик"
+mouse_filter = 2
+
 [node name="Exploration" type="Node2D" parent="."]
 y_sort_enabled = true
 script = ExtResource("1")
@@ -181,3 +198,6 @@ color = Color(0.75, 0.65, 0.36, 1)
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
 enabled = true
+
+[node name="LimitedVendorService" type="Node" parent="."]
+script = ExtResource("10")

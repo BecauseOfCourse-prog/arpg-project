@@ -37,7 +37,7 @@ This is the canonical, prioritized inventory of proposed and planned work. Entri
 | ARPG-013 | Generate two variable-size exploration zones with randomized object placement and connected traversal. | P1 | Done | ARPG-003, ARPG-006, ARPG-011 | [Completed specification](specs/foundation/procedural-exploration-zones.md) |
 | ARPG-015 | Separate explicit attack/interaction clicks from movement-only mouse holds. | P1 | Done | ARPG-003, ARPG-004, ARPG-011, ARPG-013, ARPG-014 | [Completed specification](specs/foundation/click-and-hold-input.md) |
 | ARPG-012 | Add game time, day periods, smooth lighting, a time HUD, and daily vendor refresh events. | P1 | Done | ARPG-007; ARPG-009 save integration | [Completed specification](specs/foundation/game-time-day-cycle.md) |
-| ARPG-016 | Add a visually distinct second test vendor with one enhanced potion replenished daily. | P1 | Specified | ARPG-007, ARPG-012; stock persistence and key-2 enhanced potion use are specified | [Accepted specification](specs/foundation/limited-daily-vendor.md) |
+| ARPG-016 | Add a visually distinct second test vendor with one enhanced potion replenished daily. | P1 | Done | ARPG-007, ARPG-012; stock persistence and key-2 enhanced potion use are specified | [Completed specification](specs/foundation/limited-daily-vendor.md) |
 | ARPG-010 | Expand into multiple classes, enemy families, biome chains, affixes, and companion hiring. | P2 | Proposed | First playable slice; each subsystem requires its own specifications | — |
 
 ## Backlog maintenance

@@ -121,6 +121,18 @@ func _slot_path(slot_id: String) -> String:
 	return "%s/%s.json" % [storage_directory, slot_id]
 
 func _is_valid_payload(payload: Dictionary) -> bool:
+	if payload.has("limited_vendor"):
+		if not payload.has("game_time") or not VendorService.valid_stock_snapshot(payload.limited_vendor, preload("res://data/vendors/limited_vendor.tres")):
+			return false
+		if not GameClock.valid_snapshot(payload.game_time):
+			return false
+		var refresh_day := int(payload.game_time.day) if payload.game_time.minute >= 360.0 else int(payload.game_time.day) - 1
+		if payload.limited_vendor.day > refresh_day:
+			return false
+		if payload.game_time.pending_vendor_day == -1 and payload.limited_vendor.day != refresh_day:
+			return false
+		if payload.game_time.pending_vendor_day != -1 and (payload.game_time.pending_vendor_day != refresh_day or payload.limited_vendor.day >= refresh_day):
+			return false
 	# Additive schema-1 field: older saves load at Day 1, 08:00.
 	if payload.has("game_time") and not GameClock.valid_snapshot(payload["game_time"]):
 		return false

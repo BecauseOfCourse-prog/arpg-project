@@ -16,7 +16,7 @@ Change specifications are durable records of requested behavior changes and thei
 | Specification | Status | Summary |
 | --- | --- | --- |
 | [ARPG-012: Game Time and Day Cycle](foundation/game-time-day-cycle.md) | Complete | Implements 24-minute days, four periods, smooth lighting, HUD time, persistence, and daily vendor refresh events; verified automatically and by the owner. |
-| [ARPG-016: Limited Daily Test Vendor](foundation/limited-daily-vendor.md) | Accepted | Adds a visually distinct second vendor with one enhanced potion replenished at 06:00; stock persistence and key-2 enhanced potion use are specified. |
+| [ARPG-016: Limited Daily Test Vendor](foundation/limited-daily-vendor.md) | Complete | Adds a visually distinct second vendor with one enhanced potion replenished at 06:00; stock persistence and key-2 enhanced potion use are implemented. |
 | [ARPG-001: First Playable Vertical Slice](foundation/first-playable-vertical-slice.md) | Complete | Delivers the hub-to-exploration combat and loot loop, with automated and editor verification. |
 | [ARPG-002: Godot Project Structure and Scene Conventions](foundation/project-structure.md) | Complete | Defines the repository-root project, continuous world scene, reusable actor/item scenes, and Godot Resources. |
 | [ARPG-003: Player Movement and Navigation](foundation/player-movement-navigation.md) | Complete | Implements mouse-led movement, obstacle navigation, actor collision, and the sole passage between connected zones for the first slice. |
@@ -35,3 +35,5 @@ Change specifications are durable records of requested behavior changes and thei
 
 
 Use `docs/specs/<topic>/<short-change-name>.md`, with lowercase kebab-case filenames. Add every specification to this index. Preserve completed specifications as history.
+
+Follow-up: [Hide Exhausted Vendor Offers](foundation/vendor-sold-out-visibility.md) — Complete. Sold-out regular offers disappear until replenishment, without a sold-out message.

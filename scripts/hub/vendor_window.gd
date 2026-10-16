@@ -8,6 +8,7 @@ var _panel: PanelContainer
 var _status: Label
 var _offer_grid: Control
 var _showing_buyback := false
+var _title: Label
 
 func _ready() -> void:
 	visible = false
@@ -15,6 +16,7 @@ func _ready() -> void:
 
 func open_vendor(vendor_service: VendorService) -> void:
 	service = vendor_service
+	_title.text = service.definition.vendor_name
 	if not service.transaction_rejected.is_connected(_on_transaction_rejected):
 		service.transaction_rejected.connect(_on_transaction_rejected)
 	if not service.transaction_completed.is_connected(_on_transaction_completed):
@@ -34,6 +36,7 @@ func _build_ui() -> void:
 	var header := HBoxContainer.new()
 	column.add_child(header)
 	var title := Label.new()
+	_title = title
 	title.text = "Торговец"
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
@@ -66,10 +69,14 @@ func _refresh() -> void:
 		_offer_grid.call("show_buyback", service.buyback_entries)
 	else:
 		var stock_labels: Array[String] = []
+		var visible_offers: Array[VendorOffer] = []
 		if service.definition != null:
 			for index in range(service.definition.offers.size()):
-				stock_labels.append("Unlimited" if service.definition.stock_mode == VendorDefinition.StockMode.FIXED_UNLIMITED else "Stock: %d" % service.remaining_stock(index))
-			_offer_grid.call("show_offers", service.definition.offers, stock_labels)
+				var unlimited := service.definition.stock_mode == VendorDefinition.StockMode.FIXED_UNLIMITED
+				# Preserve catalog indices while removing exhausted offers from drawing and hit testing.
+				visible_offers.append(service.definition.offers[index] if unlimited or service.remaining_stock(index) > 0 else null)
+				stock_labels.append("Без ограничений" if unlimited else "В наличии: %d" % service.remaining_stock(index))
+			_offer_grid.call("show_offers", visible_offers, stock_labels)
 
 func sell_inventory_item(index: int, sell_entire_stack: bool = false) -> void:
 	if not visible or service == null:

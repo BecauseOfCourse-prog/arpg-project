@@ -99,6 +99,34 @@ func remaining_stock(offer_index: int) -> int:
 		return 0
 	return _remaining_stock[offer_index]
 
+func stock_snapshot() -> Dictionary:
+	return {"day": current_day, "quantities": _remaining_stock.duplicate()}
+
+func restore_stock(data: Dictionary) -> bool:
+	if not valid_stock_snapshot(data, definition):
+		return false
+	current_day = int(data.day)
+	_remaining_stock.assign(data.quantities)
+	buyback_entries.clear()
+	return true
+
+static func valid_stock_snapshot(data: Variant, vendor: VendorDefinition) -> bool:
+	if vendor == null or not data is Dictionary:
+		return false
+	if not data.get("day") is int and not data.get("day") is float:
+		return false
+	if not is_finite(float(data.day)) or float(data.day) != floor(float(data.day)) or data.day < 0 or data.day > GameClock.MAX_DAY:
+		return false
+	if not data.get("quantities") is Array or data.quantities.size() != vendor.offers.size():
+		return false
+	for index in range(vendor.offers.size()):
+		var quantity: Variant = data.quantities[index]
+		if not quantity is int and not quantity is float:
+			return false
+		if not is_finite(float(quantity)) or float(quantity) != floor(float(quantity)) or quantity < 0 or quantity > vendor.offers[index].stock_quantity:
+			return false
+	return true
+
 func _is_configured() -> bool:
 	return definition != null and inventory != null and progression != null
 

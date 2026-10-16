@@ -54,6 +54,11 @@ func _ready() -> void:
 		_inventory.configure_progression(_progression)
 	if service != null and _inventory != null and _progression != null:
 		service.configure(preload("res://data/vendors/hub_vendor.tres"), _inventory, _progression)
+	var limited := get_node("LimitedVendorService") as VendorService
+	limited.configure(preload("res://data/vendors/limited_vendor.tres"), _inventory, _progression)
+	limited.advance_day(1)
+	game_clock.vendor_refresh_due.connect(limited.advance_day)
+	(get_node("Hub/LimitedVendor") as VendorInteractable).activated.connect(window.open_vendor.bind(limited))
 	if vendor != null and service != null and window != null:
 		window.inventory = _inventory
 		window.progression = _progression
@@ -73,6 +78,10 @@ func _physics_process(_delta: float) -> void:
 
 func start_new_game() -> void:
 	game_clock.reset()
+	var limited := get_node("LimitedVendorService") as VendorService
+	limited.configure(preload("res://data/vendors/limited_vendor.tres"), _inventory, _progression)
+	limited.current_day = 1
+	limited.buyback_entries.clear()
 	if procedural_generation_enabled:
 		regenerate_exploration()
 
@@ -110,6 +119,10 @@ func _clear_generated_session_state() -> void:
 			node.free()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("use_enhanced_health_potion", false):
+		use_health_potion("enhanced_health_potion")
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("use_health_potion", false):
 		use_health_potion()
 		get_viewport().set_input_as_handled()
@@ -144,13 +157,13 @@ func save_quest_completion() -> bool:
 func save_level_up() -> bool:
 	return _save_autoslot()
 
-func use_health_potion() -> bool:
-	if not _session_active or _inventory == null:
+func use_health_potion(item_id: String = "health_potion") -> bool:
+	if not _session_active or _inventory == null or get_tree().paused:
 		return false
 	var player := get_node_or_null("Hub/Player") as PlayerActor
 	if player == null or player.current_health >= player.max_health:
 		return false
-	var item_index := _inventory.find_item_index_by_id("health_potion")
+	var item_index := _inventory.find_item_index_by_id(item_id)
 	if item_index < 0:
 		return false
 	var potion := _inventory.collected_items[item_index]
@@ -188,6 +201,7 @@ func _build_save_payload() -> Dictionary:
 		"counts": counts,
 		"quests": {},
 		"game_time": game_clock.snapshot(),
+		"limited_vendor": (get_node("LimitedVendorService") as VendorService).stock_snapshot(),
 	}
 
 func _restore_pending_game() -> void:
@@ -200,6 +214,9 @@ func _restore_pending_game() -> void:
 	var payload := pending_data
 	if payload.has("game_time") and not GameClock.valid_snapshot(payload["game_time"]):
 		return
+	var limited := get_node("LimitedVendorService") as VendorService
+	if payload.has("limited_vendor") and not VendorService.valid_stock_snapshot(payload.limited_vendor, limited.definition):
+		return
 	if _progression == null or _inventory == null:
 		return
 	if not _inventory.restore_items(payload.get("items", []), payload.get("positions", []), payload.get("counts", [])):
@@ -209,10 +226,16 @@ func _restore_pending_game() -> void:
 		game_clock.restore(payload["game_time"])
 	else:
 		game_clock.reset()
+	if payload.has("limited_vendor"):
+		limited.restore_stock(payload.limited_vendor)
+	else:
+		limited.configure(preload("res://data/vendors/limited_vendor.tres"), _inventory, _progression)
+		limited.current_day = game_clock.day if game_clock.minute >= 360.0 else maxi(0, game_clock.day - 1)
 	if procedural_generation_enabled:
 		regenerate_exploration()
 	else:
 		_reset_cache_world_state()
+	game_clock.set_trading_open(false)
 	var player := get_node_or_null("Hub/Player") as PlayerActor
 	if player != null:
 		player.restore_full_health()

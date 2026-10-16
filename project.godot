@@ -37,6 +37,11 @@ use_health_potion={
 "events": [Object(InputEventKey,"physical_keycode":49,"unicode":49)]
 }
 
+use_enhanced_health_potion={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":50,"unicode":50)]
+}
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")

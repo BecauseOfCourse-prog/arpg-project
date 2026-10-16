@@ -131,7 +131,7 @@ func _draw_item_tooltip(index: int) -> void:
 		lines.append("Количество: %d" % _counts[index])
 	if not _stock_labels[index].is_empty():
 		lines.append(_stock_labels[index])
-	var tooltip_size := Vector2(190, lines.size() * 17 + 8)
+	var tooltip_size := Vector2(330, lines.size() * 17 + 8)
 	var mouse_position := get_local_mouse_position() + Vector2(12, 12)
 	if mouse_position.x + tooltip_size.x > size.x:
 		mouse_position.x = size.x - tooltip_size.x

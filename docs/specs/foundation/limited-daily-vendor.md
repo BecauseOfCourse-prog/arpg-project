@@ -1,13 +1,13 @@
 # ARPG-016: Limited Daily Test Vendor
 
-- **Status:** Accepted
+- **Status:** Complete
 - **Owner:** Project owner
 - **Created:** 2026-10-16
 - **Related specifications:** [Hub Vendor](hub-vendor.md); [Game Time and Day Cycle](game-time-day-cycle.md); [Save and Load](save-load.md)
 
 ## Summary
 
-Add a second, visually distinct vendor to the test world's safe hub. This vendor sells one enhanced health potion per trading day and replenishes that offer daily. The project owner requested documentation only; implementation has not started.
+Add a second, visually distinct vendor to the test world's safe hub. This vendor sells one enhanced health potion per trading day and replenishes that offer daily. Implementation selected by the project owner on 2026-10-16.
 
 ## Scope
 
@@ -35,14 +35,14 @@ Hub Services owns vendor transaction and replenishment rules; Items & Loot owns 
 
 ## Acceptance criteria
 
-- [ ] Both vendors exist in the test hub and are visually distinguishable.
-- [ ] The second vendor offers one enhanced potion; a successful purchase exhausts regular stock.
-- [ ] Failed purchases leave all owned state unchanged, and sold-out feedback is clear.
-- [ ] Closing/reopening trading and selling items do not refill regular stock.
-- [ ] Each 06:00 replenishment sets regular stock to one without accumulating unsold units; open trading safely defers refresh.
-- [ ] Vendor buyback lists are independent and preserve existing transaction rules.
-- [ ] The enhanced potion costs 50 gold and heals 100 HP capped at maximum health; key 2 consumes it, while key 1 consumes only the ordinary potion.
-- [ ] Saving/loading available and exhausted stock restores the same quantity and refresh identity; pending refresh is neither lost nor duplicated.
+- [x] Both vendors exist in the test hub and are visually distinguishable.
+- [x] The second vendor offers one enhanced potion; a successful purchase exhausts regular stock.
+- [x] Failed purchases leave all owned state unchanged, and sold-out feedback is clear.
+- [x] Closing/reopening trading and selling items do not refill regular stock.
+- [x] Each 06:00 replenishment sets regular stock to one without accumulating unsold units; open trading safely defers refresh.
+- [x] Vendor buyback lists are independent and preserve existing transaction rules.
+- [x] The enhanced potion costs 50 gold and heals 100 HP capped at maximum health; key 2 consumes it, while key 1 consumes only the ordinary potion.
+- [x] Saving/loading available and exhausted stock restores the same quantity and refresh identity; pending refresh is neither lost nor duplicated.
 
 ## Open questions
 
@@ -50,7 +50,7 @@ None for the selected scope. The project owner resolved stock persistence, price
 
 ## Verification plan and results
 
-No implementation or tests performed. Planned automated checks cover stock exhaustion, failed transactions, independent vendor state/buyback, non-accumulating daily replenishment, deferred refresh, 50-gold pricing, 100-HP healing, distinct key-1/key-2 consumption, and stock/time save round trips including pending refresh. Manually verify vendor distinction, approach/open flow, and sold-out presentation in Godot.
+Implemented and verified on 2026-10-16. Full display-mode GdUnit4 run: 74/74 passed (reports/report_76); expanded vendor suite: 7/7 passed (reports/report_77). Covers stock exhaustion, failed purchases, independent buyback, daily and deferred refresh, potion healing and key selection, stock/time snapshots, JSON file round trip, legacy initialization, invalid saves, and click-to-approach opening. Inspected the captured rendered frame reports/limited-vendor.png: both vendor shapes/colors are distinct, the alchemist window opens, and exhausted stock is crossed out. A human Editor playthrough has not been performed.
 
 ## Documentation impact
 
@@ -65,3 +65,6 @@ No implementation or tests performed. Planned automated checks cover stock exhau
 | --- | --- |
 | 2026-10-16 | Project owner selected a visually different second test vendor, one enhanced potion in stock, and daily replenishment; recorded without implementation. |
 | 2026-10-16 | Project owner selected persistent stock, a 50-gold price, 100-HP healing, and key 2 for enhanced potion use; recorded ADR-0005. |
+
+
+Implementation uses optional schema-1 limited_vendor {day, quantities}; pending refresh remains in game_time. Legacy saves initialize one potion at the current trading day. Stock snapshots are validated against authored quantities and saved game time before loading.
