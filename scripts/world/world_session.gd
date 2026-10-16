@@ -15,6 +15,7 @@ var game_clock: GameClock
 var _daylight: CanvasModulate
 var _time_hud: CanvasLayer
 var _time_label: Label
+var debug_time_panel: DebugTimePanel
 
 func _setup_game_time() -> void:
 	game_clock = GameClock.new()
@@ -34,6 +35,10 @@ func _setup_game_time() -> void:
 	var window := get_node("VendorWindow") as VendorWindow
 	window.visibility_changed.connect(func() -> void: game_clock.set_trading_open(window.visible))
 	_update_game_time_view()
+	debug_time_panel = DebugTimePanel.new()
+	debug_time_panel.name = "DebugTimePanel"
+	add_child(debug_time_panel)
+	debug_time_panel.configure(game_clock)
 
 func _update_game_time_view() -> void:
 	_daylight.color = game_clock.lighting()
@@ -78,6 +83,7 @@ func _physics_process(_delta: float) -> void:
 
 func start_new_game() -> void:
 	game_clock.reset()
+	debug_time_panel.reset_controls()
 	var limited := get_node("LimitedVendorService") as VendorService
 	limited.configure(preload("res://data/vendors/limited_vendor.tres"), _inventory, _progression)
 	limited.current_day = 1
@@ -142,6 +148,7 @@ func activate_session() -> void:
 	_session_active = true
 	game_clock.active = true
 	_time_hud.visible = true
+	debug_time_panel.visible = true
 	game_clock.set_trading_open((get_node("VendorWindow") as VendorWindow).visible)
 
 func save_manual(slot_id: String) -> bool:
@@ -222,6 +229,7 @@ func _restore_pending_game() -> void:
 	if not _inventory.restore_items(payload.get("items", []), payload.get("positions", []), payload.get("counts", [])):
 		return
 	_progression.gold = maxi(0, int(payload.get("gold", 0)))
+	debug_time_panel.reset_controls()
 	if payload.has("game_time"):
 		game_clock.restore(payload["game_time"])
 	else:

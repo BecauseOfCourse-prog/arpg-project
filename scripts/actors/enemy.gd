@@ -37,3 +37,11 @@ func take_damage(amount: int) -> void:
 		_sprite.modulate = Color(1.0, 0.65, 0.45, 1.0)
 		var hit_tween := create_tween()
 		hit_tween.tween_property(_sprite, "modulate", Color.WHITE, 0.18)
+
+func contains_attack_point(world_point: Vector2) -> bool:
+	if is_defeated:
+		return false
+	if _sprite != null and _sprite.texture != null:
+		var local_point := _sprite.to_local(world_point)
+		return _sprite.get_rect().has_point(local_point) and _sprite.is_pixel_opaque(local_point)
+	return global_position.distance_to(world_point) <= click_radius

@@ -9,11 +9,12 @@ const MAX_DAY := 100_000
 var day := 1
 var minute := 480.0
 var active := false
+var debug_frozen := false
 var pending_vendor_day := -1
 var trading_open := false
 
 func _process(delta: float) -> void:
-	if active:
+	if active and not debug_frozen:
 		advance(delta)
 
 func reset() -> void:

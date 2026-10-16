@@ -15,6 +15,9 @@ Change specifications are durable records of requested behavior changes and thei
 
 | Specification | Status | Summary |
 | --- | --- | --- |
+| [ARPG-019: Click-to-pick-up Enemy Loot](foundation/click-to-pick-up-loot.md) | Complete | Named ground loot is collected by explicit click and approach, replacing touch pickup. |
+| [ARPG-018: Enemy Sprite Attack Selection](foundation/enemy-sprite-targeting.md) | Complete | Selects enemies by opaque sprite pixels instead of the old placeholder radius. |
+| [ARPG-017: In-game Time Test Controls](foundation/debug-time-controls.md) | Complete | Adds F8 time selection, period presets, hour/day steps, and clock freezing for testing. |
 | [ARPG-012: Game Time and Day Cycle](foundation/game-time-day-cycle.md) | Complete | Implements 24-minute days, four periods, smooth lighting, HUD time, persistence, and daily vendor refresh events; verified automatically and by the owner. |
 | [ARPG-016: Limited Daily Test Vendor](foundation/limited-daily-vendor.md) | Complete | Adds a visually distinct second vendor with one enhanced potion replenished at 06:00; stock persistence and key-2 enhanced potion use are implemented. |
 | [ARPG-001: First Playable Vertical Slice](foundation/first-playable-vertical-slice.md) | Complete | Delivers the hub-to-exploration combat and loot loop, with automated and editor verification. |

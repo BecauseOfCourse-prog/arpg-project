@@ -155,7 +155,7 @@ func test_passive_enemy_remains_stationary_without_attack_command() -> void:
 	assert_int(enemy.current_health).is_equal(5)
 	main.queue_free()
 
-func test_touching_world_item_collects_it_and_updates_inventory_display() -> void:
+func test_clicking_world_item_collects_it_and_updates_inventory_display() -> void:
 	var main := _create_main()
 	if main == null:
 		return

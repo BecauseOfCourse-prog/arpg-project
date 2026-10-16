@@ -9,3 +9,6 @@ func _ready() -> void:
 
 func interact(_player: PlayerActor, _progression: PlayerProgression, _navigation: NavigationGrid) -> bool:
 	return false
+
+func contains_interaction_point(world_point: Vector2) -> bool:
+	return global_position.distance_to(world_point) <= click_radius

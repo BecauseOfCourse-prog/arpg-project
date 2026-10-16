@@ -184,7 +184,7 @@ func _request_move_to(destination: Vector2, resolve_boundary: bool) -> void:
 func _enemy_at(point: Vector2) -> EnemyActor:
 	for node: Node in get_tree().get_nodes_in_group("enemies"):
 		var enemy := node as EnemyActor
-		if enemy != null and enemy.global_position.distance_to(point) <= enemy.click_radius:
+		if enemy != null and enemy.contains_attack_point(point):
 			return enemy
 	return null
 
@@ -197,7 +197,7 @@ func _interactable_at(point: Vector2) -> WorldInteractable:
 		if interactable == null or interactable.is_queued_for_deletion():
 			continue
 		var distance := interactable.global_position.distance_to(point)
-		if distance > interactable.click_radius:
+		if not interactable.contains_interaction_point(point):
 			continue
 		var gold_priority := interactable is GoldPickup and not closest is GoldPickup
 		var same_priority := (interactable is GoldPickup) == (closest is GoldPickup)
