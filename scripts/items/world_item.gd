@@ -5,6 +5,7 @@ class_name WorldItem
 
 func _ready() -> void:
 	add_to_group("world_items")
+	add_to_group("world_transients")
 	body_entered.connect(_on_body_entered)
 
 func _on_body_entered(body: Node2D) -> void:

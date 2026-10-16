@@ -203,7 +203,7 @@ func _create_main() -> Node:
 	assert_object(main_scene).is_not_null()
 	if main_scene == null:
 		return null
-	var main := main_scene.instantiate()
+	var main := WorldTestFixture.create_main()
 	add_child(main)
 	main.call("_start_new_game")
 	return main

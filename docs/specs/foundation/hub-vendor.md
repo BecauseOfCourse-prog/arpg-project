@@ -1,6 +1,6 @@
 # ARPG-007: Hub Vendor
 
-- **Status:** Done
+- **Status:** Complete
 - **Owner:** Project owner
 - **Created:** 2026-10-14
 - **Related specifications:** [ARPG-001: First Playable Vertical Slice](first-playable-vertical-slice.md); [ARPG-003: Player Movement and Navigation](player-movement-navigation.md); [ARPG-005: Equipment Drop and Minimal Inventory](loot-and-inventory.md)
@@ -112,3 +112,4 @@ Keep concrete item catalogs, purchase prices, and class-specific starting gold i
 | 2026-10-14 | Project owner set stack capacity to 12 items; clicks sell one unit and Shift+click sells the full stack. Health potions stack; the Emberwood Bow does not. |
 | 2026-10-15 | Project owner verified visible rejection feedback in Godot Editor; all ARPG-007 acceptance criteria are complete. |
 | 2026-10-15 | ARPG-011 clarifies map cache gold rewards as approach-to-open interactions rather than attacks on breakable objects. |
+| 2026-10-16 | [ARPG-014](world-interaction-and-inventory-feedback.md) supersedes immediate remote vendor opening with click-to-approach trading and adds current gold to the player inventory. |

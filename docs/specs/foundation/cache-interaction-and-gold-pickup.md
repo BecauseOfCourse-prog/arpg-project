@@ -1,9 +1,9 @@
 # ARPG-011: Cache Interaction and Gold Pickup
 
-- **Status:** Accepted
+- **Status:** Complete
 - **Owner:** Project owner
 - **Created:** 2026-10-15
-- **Related specifications:** [ARPG-003: Player Movement and Navigation](player-movement-navigation.md); [ARPG-007: Hub Vendor](hub-vendor.md); [ARPG-009: Save and Load](save-load.md)
+- **Related specifications:** [ARPG-003: Player Movement and Navigation](player-movement-navigation.md); [ARPG-007: Hub Vendor](hub-vendor.md); [ARPG-009: Save and Load](save-load.md); [ARPG-013: Procedural Exploration Zone Generation](procedural-exploration-zones.md)
 - **Related ADRs:** [ADR-0002: Game System Boundaries](../../decisions/ADR-0002-game-system-boundaries.md); [ADR-0004: Player Gold Balance Ownership](../../decisions/ADR-0004-player-gold-balance-ownership.md)
 
 ## Summary
@@ -74,27 +74,27 @@ Map caches provide a direct exploration reward and implement the map-cache gold 
 
 ## Acceptance criteria
 
-- [ ] Clicking a closed cache issues an approach movement command; opening occurs automatically only after the player reaches interaction range.
-- [ ] Opening a cache does not invoke basic attack or ability behavior.
-- [ ] The cache produces exactly one gold pile per world session, with an integer value from 1 through 20 inclusive.
-- [ ] Repeated clicks on an open cache do not create additional rewards during the same session.
-- [ ] The gold pile spawns on traversable, reachable ground and never beyond the map boundary or inside an impassable obstacle.
-- [ ] Clicking the pile approaches and collects it; the pile is removed and the player's balance increases by its value exactly once.
-- [ ] An unreachable target does not cause teleportation, remote opening, or remote collection.
-- [ ] Loading a save restores caches to closed state and permits a new reward, including when previously collected gold remains in the loaded balance.
-- [ ] Loading a save removes any uncollected gold pile from the prior session.
-- [ ] The test cache is placed at a reachable location within the exploration area.
-- [ ] Automated tests cover interaction, one-time reward generation per session, reward bounds, reachable pickup placement, click-to-collect, gold balance updates, and load-reset behavior.
-- [ ] The project owner verifies the temporary cache and gold visuals and the interaction flow in Godot Editor.
+- [x] Clicking a closed cache issues an approach movement command; opening occurs automatically only after the player reaches interaction range.
+- [x] Opening a cache does not invoke basic attack or ability behavior.
+- [x] The cache produces exactly one gold pile per world session, with an integer value from 1 through 20 inclusive.
+- [x] Repeated clicks on an open cache do not create additional rewards during the same session.
+- [x] The gold pile spawns on traversable, reachable ground and never beyond the map boundary or inside an impassable obstacle.
+- [x] Clicking the pile approaches and collects it; the pile is removed and the player's balance increases by its value exactly once.
+- [x] An unreachable target does not cause teleportation, remote opening, or remote collection.
+- [x] Loading a save restores caches to closed state and permits a new reward, including when previously collected gold remains in the loaded balance.
+- [x] Loading a save removes any uncollected gold pile from the prior session.
+- [x] The test cache is placed at a reachable location within the exploration area.
+- [x] Automated tests cover interaction, one-time reward generation per session, reward bounds, reachable pickup placement, click-to-collect, gold balance updates, and load-reset behavior.
+- [x] The project owner verifies the temporary cache and gold visuals and the interaction flow in Godot Editor. The reported player/cache draw-order correction is tracked in ARPG-014.
 
 ## Verification plan and results
 
-Pending implementation. Automated tests will verify deterministic interaction and reward invariants, including the inclusive reward range and exactly-once gold transfer. Godot Editor verification will check approach, automatic opening, visible ground pile, and click-to-collect behavior.
+The initial eight GdUnit4 cases in `test/cache_interaction_test.gd` pass. They cover click-to-approach opening without combat, click-only gold collection, exactly-once reward and gold transfer, 64 reward rolls within the inclusive range, reachable placement near the map boundary, unreachable targets, nearby targets behind a wall, cancellation by ground/enemy commands, and load reset while preserving saved gold. The implementation's full suite passed in normal display mode (49 cases, 0 errors, 0 failures, 0 orphans); the report is `reports/report_61/index.html`. On 2026-10-16 the project owner confirmed the cache works in Godot Editor and reported a player/cache overlap issue. ARPG-014 corrects that draw order and adds a rendered overlap regression test, alongside inventory gold and vendor approach improvements.
 
 ## Documentation impact
 
-- [ ] Update `docs/PROJECT_CONTEXT.md` when implementation establishes the current gameplay baseline.
-- [ ] Add or update an ADR if implementation changes a lasting system boundary or persistence decision.
+- [x] Update `docs/PROJECT_CONTEXT.md` when implementation establishes the current gameplay baseline.
+- [x] Review ADR impact; existing ownership and persistence decisions remain sufficient.
 - [x] Add this specification to the index and link it from the backlog.
 - [x] Update ARPG-007 to link the clarified cache interaction and reward behavior.
 
@@ -106,9 +106,17 @@ None. The project owner selected approach-and-open interaction, a random 1–20 
 
 Keep the cache interaction separate from combat targeting so clicks cannot accidentally issue an attack. Use the existing movement/navigation behavior for both cache and pile targets.
 
+`WorldInteractable` provides shared click and interaction ranges. `PlayerActor` routes cache/gold clicks to `InteractionController` and cancels repeated combat. Ground or enemy commands cancel a pending interaction. The controller requires a valid navigation path and opens/collects only when its remaining length is within interaction range, preventing interaction through walls. The test cache is a non-blocking small object at `(110, -95)` in the exploration area, with a 22-unit click radius and a 24-unit interaction range. Gold uses an 18-unit click radius and a 16-unit pickup range.
+
+`MapCache` tries four nearby 32-unit offsets and then its own footprint for a reachable, unobstructed reward position. If none is valid, it remains closed and produces no reward. Gold piles display their amount and give gold through `PlayerProgression.add_gold`; proximity alone does not collect them. A successful load cancels pending interaction, removes uncollected piles, and resets caches without changing the save schema. ARPG-013 will replace the fixed cache placement when procedural zones are implemented.
+
 ## Change record
 
 | Date | Update |
 | --- | --- |
 | 2026-10-15 | Drafted from the project owner's decisions: click to approach and open caches, random 1–20 gold in a ground pile, click to approach and collect, and reset cache state on load with repeat rewards allowed for the prototype. |
 | 2026-10-15 | Review clarifications: uncollected ground rewards disappear on load; place the test cache at any accessible point in the exploration area; Hub Services is not an affected system. |
+| 2026-10-15 | ARPG-013 will provide the test cache's valid randomized placement in generated exploration zones. |
+| 2026-10-16 | Implemented the test cache, approach-and-open interaction, reachable random gold reward, click-to-approach collection, command cancellation, and reset on successful load. Eight automated cache tests pass; Godot Editor visual verification remains pending. |
+| 2026-10-16 | Project owner confirmed cache behavior in Godot Editor. Closed ARPG-011; the reported draw-order issue and additional inventory/vendor improvements are tracked by ARPG-014. |
+| 2026-10-16 | ARPG-013 now supplies the cache's randomized reachable placement and recreates it closed when loading a fresh generated layout. The earlier fixed position remains only in deterministic gameplay test fixtures. |

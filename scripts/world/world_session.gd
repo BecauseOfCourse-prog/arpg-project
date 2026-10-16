@@ -2,6 +2,12 @@ extends Node2D
 
 const MAIN_MENU_SCENE := "res://scenes/main/main.tscn"
 
+# The authored layout is retained for deterministic gameplay test fixtures.
+@export var procedural_generation_enabled := true
+
+var exploration_layout: Dictionary = {}
+var generation_revision := 0
+
 var _inventory: InventoryController
 var _progression: PlayerProgression
 var _session_active := false
@@ -15,6 +21,8 @@ func _ready() -> void:
 	var window := get_node_or_null("VendorWindow") as VendorWindow
 	if player != null and _progression != null:
 		_progression.initialize_from_definition(player.definition)
+	if _inventory != null:
+		_inventory.configure_progression(_progression)
 	if service != null and _inventory != null and _progression != null:
 		service.configure(preload("res://data/vendors/hub_vendor.tres"), _inventory, _progression)
 	if vendor != null and service != null and window != null:
@@ -23,10 +31,53 @@ func _ready() -> void:
 		vendor.activated.connect(window.open_vendor.bind(service))
 		if _inventory != null:
 			_inventory.item_clicked.connect(window.sell_inventory_item)
+	if procedural_generation_enabled:
+		regenerate_exploration()
 	_restore_pending_game()
 	var root_window := get_tree().root
 	if not root_window.close_requested.is_connected(_on_window_close_requested):
 		root_window.close_requested.connect(_on_window_close_requested)
+
+func _physics_process(_delta: float) -> void:
+	if procedural_generation_enabled:
+		_update_camera()
+
+func start_new_game() -> void:
+	if procedural_generation_enabled:
+		regenerate_exploration()
+
+func regenerate_exploration(random_seed: int = -1) -> void:
+	_clear_generated_session_state()
+	var rng := RandomNumberGenerator.new()
+	if random_seed < 0:
+		rng.randomize()
+	else:
+		rng.seed = random_seed
+	exploration_layout = ExplorationGenerator.new().generate(rng)
+	ExplorationBuilder.new().build(self, exploration_layout)
+	(get_node("NavigationGrid") as NavigationGrid).rebuild_ground()
+	var player := get_node("Hub/Player") as PlayerActor
+	player.global_position = ExplorationGenerator.HUB_SPAWN
+	generation_revision += 1
+	_update_camera()
+
+func _update_camera() -> void:
+	var camera := get_node("Camera2D") as Camera2D
+	camera.global_position = (get_node("Hub/Player") as PlayerActor).global_position
+	camera.force_update_scroll()
+
+func _clear_generated_session_state() -> void:
+	var player := get_node("Hub/Player") as PlayerActor
+	player.cancel_pointer_input()
+	player.stop_movement()
+	(get_node("InteractionController") as InteractionController).cancel_interaction()
+	var combat := get_node("CombatController") as CombatController
+	combat.target = null
+	var vendor_window := get_node("VendorWindow") as VendorWindow
+	vendor_window.hide()
+	for node: Node in get_tree().get_nodes_in_group("world_transients"):
+		if is_ancestor_of(node):
+			node.free()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("use_health_potion", false):
@@ -118,7 +169,26 @@ func _restore_pending_game() -> void:
 	if not _inventory.restore_items(payload.get("items", []), payload.get("positions", []), payload.get("counts", [])):
 		return
 	_progression.gold = maxi(0, int(payload.get("gold", 0)))
+	if procedural_generation_enabled:
+		regenerate_exploration()
+	else:
+		_reset_cache_world_state()
 	var player := get_node_or_null("Hub/Player") as PlayerActor
 	if player != null:
 		player.restore_full_health()
 	manager.call("clear_pending_game_data")
+
+func _reset_cache_world_state() -> void:
+	var interactions := get_node_or_null("InteractionController") as InteractionController
+	if interactions != null:
+		interactions.cancel_interaction()
+	var player := get_node_or_null("Hub/Player") as PlayerActor
+	if player != null:
+		player.cancel_pointer_input()
+		player.stop_movement()
+	for node: Node in get_tree().get_nodes_in_group("gold_pickups"):
+		if is_ancestor_of(node):
+			node.queue_free()
+	for node: Node in get_tree().get_nodes_in_group("map_caches"):
+		if is_ancestor_of(node):
+			(node as MapCache).reset_cache()

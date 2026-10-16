@@ -8,9 +8,11 @@ const GRID_WIDTH := 10
 const GRID_HEIGHT := 4
 var item_positions: Array[Vector2i] = []
 var item_counts: Array[int] = []
+var _progression: PlayerProgression
 
 @onready var _grid_view: Control = get_node_or_null("Panel/Contents/Grid") as Control
 @onready var _items_label: Label = get_node_or_null("Panel/Contents/Items") as Label
+@onready var _gold_label: Label = get_node_or_null("Panel/Contents/Gold") as Label
 
 func _ready() -> void:
 	add_to_group("inventory_controller")
@@ -19,6 +21,18 @@ func _ready() -> void:
 		if _grid_view.has_signal("item_clicked"):
 			_grid_view.connect("item_clicked", _on_grid_item_clicked)
 	_refresh_display()
+
+func configure_progression(progression: PlayerProgression) -> void:
+	if is_instance_valid(_progression) and _progression.gold_changed.is_connected(_refresh_gold):
+		_progression.gold_changed.disconnect(_refresh_gold)
+	_progression = progression
+	if _progression != null:
+		_progression.gold_changed.connect(_refresh_gold)
+	_refresh_gold(_progression.gold if _progression != null else 0)
+
+func _refresh_gold(amount: int) -> void:
+	if _gold_label != null:
+		_gold_label.text = "Золото: %d" % amount
 
 func collect_item(item: WorldItem) -> void:
 	if item == null or item.definition == null or item.is_queued_for_deletion():

@@ -100,7 +100,7 @@ func _create_main() -> Node:
 	var packed_scene := load("res://scenes/main/main.tscn") as PackedScene
 	if packed_scene == null:
 		return null
-	var main := packed_scene.instantiate()
+	var main := WorldTestFixture.create_main()
 	add_child(main)
 	main.call("_start_new_game")
 	return main

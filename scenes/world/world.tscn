@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world_area.gd" id="1"]
 [ext_resource type="Resource" path="res://data/areas/hub.tres" id="2"]
@@ -17,22 +17,24 @@
 [ext_resource type="Script" path="res://scripts/session/pause_menu.gd" id="15"]
 [ext_resource type="Script" path="res://scripts/abilities/ability_controller.gd" id="16"]
 [ext_resource type="Script" path="res://scripts/ui/player_hud.gd" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/world/map_cache.tscn" id="18"]
+[ext_resource type="Script" path="res://scripts/world/interaction_controller.gd" id="19"]
 [sub_resource type="RectangleShape2D" id="RectangleShape_wall"]
 size = Vector2(24, 112)
 [sub_resource type="RectangleShape2D" id="RectangleShape_north_boundary"]
 size = Vector2(24, 196)
 [sub_resource type="RectangleShape2D" id="RectangleShape_south_boundary"]
 size = Vector2(24, 196)
-[sub_resource type="CircleShape2D" id="VendorClickShape"]
-radius = 24.0
 
 [node name="World" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("13")
 
 [node name="NavigationGrid" type="Node2D" parent="."]
 script = ExtResource("5")
 
 [node name="Hub" type="Node2D" parent="."]
+y_sort_enabled = true
 script = ExtResource("1")
 definition = ExtResource("2")
 
@@ -52,23 +54,26 @@ horizontal_alignment = 1
 [node name="Player" parent="Hub" instance=ExtResource("4")]
 position = Vector2(-155, 20)
 
-[node name="Vendor" type="Area2D" parent="Hub" groups=["hub_vendors"]]
+[node name="Vendor" type="Node2D" parent="Hub" groups=["hub_vendors"]]
 position = Vector2(-280, 30)
 script = ExtResource("11")
+click_radius = 24.0
+interaction_range = 40.0
 
 [node name="Visual" type="Polygon2D" parent="Hub/Vendor"]
 polygon = PackedVector2Array(-14, -25, 14, -25, 17, 13, 0, 20, -17, 13)
 color = Color(0.82, 0.58, 0.22, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hub/Vendor"]
-shape = SubResource("VendorClickShape")
-
 [node name="Exploration" type="Node2D" parent="."]
+y_sort_enabled = true
 script = ExtResource("1")
 definition = ExtResource("3")
 
 [node name="TrainingSentinel" parent="Exploration" instance=ExtResource("6")]
 position = Vector2(300, 50)
+
+[node name="TestCache" parent="Exploration" instance=ExtResource("18")]
+position = Vector2(110, -95)
 
 [node name="CombatController" type="Node" parent="."]
 script = ExtResource("7")
@@ -78,6 +83,9 @@ script = ExtResource("8")
 
 [node name="PlayerProgression" type="Node" parent="."]
 script = ExtResource("9")
+
+[node name="InteractionController" type="Node" parent="."]
+script = ExtResource("19")
 
 [node name="VendorService" type="Node" parent="."]
 script = ExtResource("10")
@@ -103,6 +111,11 @@ mouse_filter = 2
 
 [node name="Contents" type="VBoxContainer" parent="Inventory/Panel"]
 layout_mode = 2
+
+[node name="Gold" type="Label" parent="Inventory/Panel/Contents"]
+layout_mode = 2
+mouse_filter = 2
+text = "Золото: 0"
 
 [node name="Grid" type="Control" parent="Inventory/Panel/Contents"]
 custom_minimum_size = Vector2(338, 134)
@@ -143,7 +156,6 @@ collision_layer = 1
 collision_mask = 1
 
 [node name="BoundaryVisual" type="Polygon2D" parent="NorthBoundary"]
-z_index = -1
 polygon = PackedVector2Array(-10, -98, 10, -98, 10, 98, -10, 98)
 color = Color(0.24, 0.3, 0.28, 1)
 
@@ -156,7 +168,6 @@ collision_layer = 1
 collision_mask = 1
 
 [node name="BoundaryVisual" type="Polygon2D" parent="SouthBoundary"]
-z_index = -1
 polygon = PackedVector2Array(-10, -98, 10, -98, 10, 98, -10, 98)
 color = Color(0.24, 0.3, 0.28, 1)
 

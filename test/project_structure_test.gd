@@ -71,8 +71,12 @@ func test_world_mouse_click_reaches_player_after_starting_game() -> void:
 	click.pressed = true
 	click.position = player.get_global_transform_with_canvas() * player.to_local(destination)
 	get_viewport().push_input(click, true)
+	click = click.duplicate() as InputEventMouseButton
+	click.pressed = false
+	get_viewport().push_input(click, true)
 	await get_tree().physics_frame
 	assert_bool(player.is_moving()).is_true()
+	assert_vector(player._path[player._path.size() - 1]).is_equal(destination)
 	main.queue_free()
 
 func test_authored_gameplay_definitions_use_resources() -> void:
@@ -105,7 +109,7 @@ func test_navigation_routes_around_wall_and_replaces_destination() -> void:
 	assert_object(main_scene).is_not_null()
 	if main_scene == null:
 		return
-	var main := main_scene.instantiate()
+	var main := WorldTestFixture.create_main()
 	add_child(main)
 	main.call("_start_new_game")
 	await get_tree().physics_frame

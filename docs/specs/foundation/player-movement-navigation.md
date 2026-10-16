@@ -117,3 +117,4 @@ The player is a floating `CharacterBody2D` that follows a smoothed path generate
 | 2026-10-14 | Added collision barriers along the shared zone boundary, leaving only the central marked passage open; added automated path and collision coverage. |
 | 2026-10-14 | The project owner confirmed the interactive movement and transition checks; ARPG-003 is complete. |
 | 2026-10-14 | The project owner reconfirmed that the shared zone boundary works as intended: only the designated passage is traversable. |
+| 2026-10-16 | [ARPG-015](click-and-hold-input.md) clarifies input gestures: explicit short clicks activate attacks/interactions, while holds and drags update movement only. Pointer coordinates account for the following camera introduced by ARPG-013. |

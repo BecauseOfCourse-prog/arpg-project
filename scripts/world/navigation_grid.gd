@@ -1,23 +1,41 @@
 extends Node2D
 class_name NavigationGrid
 
-const GRID_ORIGIN := Vector2(-432.0, -240.0)
-const GRID_SIZE := Vector2i(54, 30)
 const CELL_SIZE := 16.0
 const PLAYER_CLEARANCE := 10.0
 
 var _astar := AStarGrid2D.new()
 var _ground_polygons: Array[PackedVector2Array] = []
 var _solid_signature := "uninitialized"
+var grid_origin := Vector2.ZERO
+var grid_size := Vector2i.ONE
 
 func _ready() -> void:
 	add_to_group("world_navigation")
-	_astar.region = Rect2i(Vector2i.ZERO, GRID_SIZE)
+	rebuild_ground()
+
+func rebuild_ground() -> void:
+	_ground_polygons.clear()
+	var bounds := Rect2()
+	var has_bounds := false
+	for ground: Polygon2D in get_tree().get_nodes_in_group("walkable_ground"):
+		if not get_parent().is_ancestor_of(ground):
+			continue
+		var polygon := _global_polygon(ground)
+		_ground_polygons.append(polygon)
+		for point: Vector2 in polygon:
+			if not has_bounds:
+				bounds = Rect2(point, Vector2.ZERO)
+				has_bounds = true
+			else:
+				bounds = bounds.expand(point)
+	grid_origin = (bounds.position / CELL_SIZE).floor() * CELL_SIZE - Vector2.ONE * CELL_SIZE
+	grid_size = Vector2i(((bounds.end - grid_origin) / CELL_SIZE).ceil()) + Vector2i.ONE
+	_astar.region = Rect2i(Vector2i.ZERO, grid_size)
 	_astar.cell_size = Vector2(CELL_SIZE, CELL_SIZE)
 	_astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
 	_astar.update()
-	for ground: Polygon2D in get_tree().get_nodes_in_group("walkable_ground"):
-		_ground_polygons.append(_global_polygon(ground))
+	_solid_signature = "uninitialized"
 
 func find_path(start: Vector2, target: Vector2, resolve_boundary: bool, mover: CollisionObject2D) -> PackedVector2Array:
 	_refresh_solids(mover)
@@ -51,13 +69,15 @@ func find_path(start: Vector2, target: Vector2, resolve_boundary: bool, mover: C
 func _refresh_solids(mover: CollisionObject2D) -> void:
 	var signature_parts: PackedStringArray = []
 	for obstacle: Node2D in get_tree().get_nodes_in_group("movement_obstacles"):
+		if not get_parent().is_ancestor_of(obstacle):
+			continue
 		signature_parts.append("%s:%s" % [obstacle.get_instance_id(), obstacle.global_transform])
 	var signature := "|".join(signature_parts)
 	if signature == _solid_signature:
 		return
 	_solid_signature = signature
-	for y in range(GRID_SIZE.y):
-		for x in range(GRID_SIZE.x):
+	for y in range(grid_size.y):
+		for x in range(grid_size.x):
 			var id := Vector2i(x, y)
 			var point := _cell_center(id)
 			var blocked := not _circle_on_ground(point)
@@ -80,8 +100,7 @@ func _circle_blocked(point: Vector2, mover: CollisionObject2D) -> bool:
 
 func is_point_on_ground(point: Vector2) -> bool:
 	if _ground_polygons.is_empty():
-		for ground: Polygon2D in get_tree().get_nodes_in_group("walkable_ground"):
-			_ground_polygons.append(_global_polygon(ground))
+		rebuild_ground()
 	return _point_on_ground(point)
 
 func _global_polygon(ground: Polygon2D) -> PackedVector2Array:
@@ -92,6 +111,29 @@ func _global_polygon(ground: Polygon2D) -> PackedVector2Array:
 
 func is_point_blocked(point: Vector2, mover: CollisionObject2D) -> bool:
 	return _circle_blocked(point, mover)
+
+func is_fully_connected(start_point: Vector2, mover: CollisionObject2D) -> bool:
+	_refresh_solids(mover)
+	var start := _nearest_walkable_id(start_point)
+	if start.x < 0:
+		return false
+	var visited: Dictionary = {start: true}
+	var queue: Array[Vector2i] = [start]
+	var head := 0
+	while head < queue.size():
+		var current := queue[head]
+		head += 1
+		for step: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+			var neighbor := current + step
+			if _is_walkable(neighbor) and not visited.has(neighbor):
+				visited[neighbor] = true
+				queue.append(neighbor)
+	var count := 0
+	for y in range(grid_size.y):
+		for x in range(grid_size.x):
+			if _is_walkable(Vector2i(x, y)):
+				count += 1
+	return visited.size() == count
 
 func _point_on_ground(point: Vector2) -> bool:
 	for polygon in _ground_polygons:
@@ -107,21 +149,21 @@ func _circle_on_ground(point: Vector2) -> bool:
 	return _point_on_ground(point)
 
 func _cell_id(point: Vector2) -> Vector2i:
-	var local := (point - GRID_ORIGIN) / CELL_SIZE
+	var local := (point - grid_origin) / CELL_SIZE
 	return Vector2i(floori(local.x), floori(local.y))
 
 func _cell_center(id: Vector2i) -> Vector2:
-	return GRID_ORIGIN + Vector2(id) * CELL_SIZE + Vector2.ONE * CELL_SIZE * 0.5
+	return grid_origin + Vector2(id) * CELL_SIZE + Vector2.ONE * CELL_SIZE * 0.5
 
 func _is_walkable(id: Vector2i) -> bool:
-	return id.x >= 0 and id.y >= 0 and id.x < GRID_SIZE.x and id.y < GRID_SIZE.y and not _astar.is_point_solid(id)
+	return id.x >= 0 and id.y >= 0 and id.x < grid_size.x and id.y < grid_size.y and not _astar.is_point_solid(id)
 
 func _nearest_walkable_id(point: Vector2) -> Vector2i:
 	var start := _cell_id(point)
 	var best := Vector2i(-1, -1)
 	var best_distance := INF
-	for y in range(maxi(0, start.y - 3), mini(GRID_SIZE.y, start.y + 4)):
-		for x in range(maxi(0, start.x - 3), mini(GRID_SIZE.x, start.x + 4)):
+	for y in range(maxi(0, start.y - 3), mini(grid_size.y, start.y + 4)):
+		for x in range(maxi(0, start.x - 3), mini(grid_size.x, start.x + 4)):
 			var id := Vector2i(x, y)
 			if _is_walkable(id):
 				var distance := point.distance_squared_to(_cell_center(id))

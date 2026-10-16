@@ -1,7 +1,15 @@
 extends Node
 class_name PlayerProgression
 
-var gold: int = 0
+signal gold_changed(amount: int)
+
+var gold: int = 0:
+	set(value):
+		var updated := maxi(0, value)
+		if gold == updated:
+			return
+		gold = updated
+		gold_changed.emit(gold)
 
 func initialize_from_definition(definition: PlayerDefinition) -> void:
 	if definition != null:

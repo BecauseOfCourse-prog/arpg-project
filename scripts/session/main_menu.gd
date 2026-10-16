@@ -67,6 +67,7 @@ func _build_interface() -> void:
 
 func _start_new_game() -> void:
 	_manager.call("clear_pending_game_data")
+	_world.call("start_new_game")
 	_show_world()
 
 func _load_slot(slot_id: String) -> void:

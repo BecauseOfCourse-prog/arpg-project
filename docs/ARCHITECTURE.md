@@ -85,7 +85,7 @@ The backlog tracks when these topics are selected. This overview does not define
 
 ## Architecture change process
 
-- Treat this document as a proposed overview until the system boundaries and principles are reviewed.
-- Record lasting technical choices in accepted ADRs; do not use this draft as evidence that a proposal was approved.
+- Follow the accepted system boundaries and state ownership recorded in this document and the accepted ADRs. The Proposed implementation principles section remains non-binding until accepted in a later decision or system specification.
+- Record lasting technical choices in accepted ADRs; do not use proposed implementation principles as evidence that a proposal was approved.
 - Update this map when an accepted specification or ADR changes system boundaries or data ownership.
 - Keep feature-specific behavior and acceptance criteria in `docs/specs/`, not duplicated here.

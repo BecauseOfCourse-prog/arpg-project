@@ -60,10 +60,16 @@ func _fire_projectile(enemy: EnemyActor) -> void:
 func _on_enemy_defeated(enemy: EnemyActor) -> void:
 	if target == enemy:
 		target = null
+	var revision := int(get_parent().get("generation_revision"))
+	call_deferred("_spawn_equipment_drop", enemy.global_position + Vector2(0, -20), revision)
+
+func _spawn_equipment_drop(position: Vector2, expected_revision: int) -> void:
+	if int(get_parent().get("generation_revision")) != expected_revision:
+		return
 	var item := EQUIPMENT_SCENE.instantiate() as WorldItem
 	if item == null:
 		return
 	item.definition = EQUIPMENT_DEFINITION
-	# A southward offset can move drops beyond the triangular ground edge.
-	item.global_position = enemy.global_position + Vector2(0, -20)
-	get_parent().call_deferred("add_child", item)
+	# Generation reserves enough ground around the enemy for the nearby reward.
+	item.global_position = position
+	get_parent().add_child(item)

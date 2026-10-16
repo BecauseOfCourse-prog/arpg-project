@@ -18,20 +18,33 @@ func test_world_wires_vendor_window_and_class_starting_gold() -> void:
 	assert_bool(service.definition != null).is_true()
 	assert_int(service.definition.stock_mode).is_equal(VendorDefinition.StockMode.FIXED_UNLIMITED)
 	assert_bool(window.visible).is_false()
-	vendor.activated.emit()
+	var player := main.get_node("World/Hub/Player") as PlayerActor
+	player.call("_issue_pointer_command", vendor.global_position)
+	assert_bool(window.visible).is_false()
+	assert_bool(player.is_moving()).is_true()
+	for _frame in range(120):
+		await get_tree().physics_frame
+		if window.visible:
+			break
 	assert_bool(window.visible).is_true()
+	assert_float(player.global_position.distance_to(vendor.global_position)).is_less_equal(vendor.interaction_range)
+	var gold_label := inventory.get_node("Panel/Contents/Gold") as Label
+	assert_str(gold_label.text).is_equal("Золото: 100")
 	window.call("_on_grid_item_clicked", 0)
 	assert_int(progression.gold).is_equal(75)
+	assert_str(gold_label.text).is_equal("Золото: 75")
 	assert_int(inventory.collected_items.size()).is_equal(1)
 	assert_int(inventory.item_counts[0]).is_equal(1)
 	inventory.item_clicked.emit(0, false)
 	assert_int(progression.gold).is_equal(87)
+	assert_str(gold_label.text).is_equal("Золото: 87")
 	assert_int(inventory.collected_items.size()).is_zero()
 	assert_bool((window.get("_status") as Label).text.contains("Продано")).is_true()
 	window.call("_show_buyback_tab")
 	assert_bool(window.get("_showing_buyback")).is_true()
 	window.call("_on_grid_item_clicked", 0)
 	assert_int(progression.gold).is_equal(75)
+	assert_str(gold_label.text).is_equal("Золото: 75")
 	assert_int(inventory.collected_items.size()).is_equal(1)
 	assert_int(inventory.item_counts[0]).is_equal(1)
 	var bow := load("res://data/items/emberwood_bow.tres") as ItemDefinition
@@ -39,6 +52,29 @@ func test_world_wires_vendor_window_and_class_starting_gold() -> void:
 	assert_bool(bow.stackable).is_false()
 	assert_bool(potion.stackable).is_true()
 	assert_int(potion.max_stack_size).is_equal(12)
+	main.queue_free()
+
+func test_vendor_approach_can_be_cancelled_and_unreachable_vendor_stays_closed() -> void:
+	var main := (load("res://scenes/main/main.tscn") as PackedScene).instantiate()
+	add_child(main)
+	main.call("_start_new_game")
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var world := main.get_node("World")
+	var player := world.get_node("Hub/Player") as PlayerActor
+	var vendor := world.get_node("Hub/Vendor") as VendorInteractable
+	var window := world.get_node("VendorWindow") as VendorWindow
+	var interactions := world.get_node("InteractionController") as InteractionController
+	player.call("_issue_pointer_command", vendor.global_position)
+	assert_object(interactions.target).is_same(vendor)
+	player.call("_issue_pointer_command", Vector2(-100, 0))
+	assert_object(interactions.target).is_null()
+	assert_bool(window.visible).is_false()
+	vendor.global_position = Vector2(-600, 0)
+	player.call("_issue_pointer_command", vendor.global_position)
+	assert_object(interactions.target).is_null()
+	assert_bool(player.is_moving()).is_false()
+	assert_bool(window.visible).is_false()
 	main.queue_free()
 
 func test_purchase_moves_gold_and_item_once() -> void:

@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/gold_pickup.gd" id="1"]
+
+[node name="GoldPickup" type="Node2D"]
+script = ExtResource("1")
+click_radius = 18.0
+interaction_range = 16.0
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-10, 0, -5, -6, 5, -6, 11, 0, 5, 6, -5, 6)
+color = Color(0.95, 0.76, 0.2, 1)
+
+[node name="Amount" type="Label" parent="."]
+offset_left = -32.0
+offset_top = -27.0
+offset_right = 32.0
+offset_bottom = -7.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "Gold"
